@@ -1,42 +1,31 @@
-﻿Build started 23/03/2016 18:28:13.
-     1>Project "C:\Users\Jamal\Desktop\Home\DEM\DeusExMachina\DeusExMachina\DeusExMachina\DeusExMachina.vcxproj" on node 2 (Build target(s)).
+﻿Build started 24/03/2016 15:17:26.
+     1>Project "C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\DeusExMachina\DeusExMachina.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(24): warning C4305: 'initializing' : truncation from 'unsigned int' to 'const uint16_t'
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(24): warning C4309: 'initializing' : truncation of constant value
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(25): warning C4305: 'initializing' : truncation from 'int' to 'const uint16_t'
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(25): warning C4309: 'initializing' : truncation of constant value
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(29): warning C4305: 'initializing' : truncation from 'unsigned int' to 'const uint16_t'
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(29): warning C4309: 'initializing' : truncation of constant value
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(41): warning C4333: '>>' : right shift by too large amount, data loss
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(45): warning C4333: '>>' : right shift by too large amount, data loss
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(61): warning C4333: '>>' : right shift by too large amount, data loss
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(67): warning C4333: '>>' : right shift by too large amount, data loss
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(68): warning C4305: '*=' : truncation from 'unsigned int' to 'uint16_t'
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(70): warning C4305: '*=' : truncation from 'unsigned int' to 'uint16_t'
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\crypto.hpp(71): warning C4333: '>>' : right shift by too large amount, data loss
-     1>c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\main.cpp(128): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-                 c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\main.cpp(126) : while compiling class template member function 'ParticleFlow<128>::ParticleFlow(void)'
-                 c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\main.cpp(218) : see reference to function template instantiation 'ParticleFlow<128>::ParticleFlow(void)' being compiled
-                 c:\users\jamal\desktop\home\dem\deusexmachina\deusexmachina\deusexmachina\main.cpp(218) : see reference to class template instantiation 'ParticleFlow<128>' being compiled
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jamal\Desktop\Home\DEM\DeusExMachina\DeusExMachina\Debug\DeusExMachina.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jamal\Desktop\Home\DEM\DeusExMachina\DeusExMachina\Debug\DeusExMachina.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jamal\Desktop\Home\DEM\DeusExMachina\DeusExMachina\Debug\DeusExMachina.lib" /MACHINE:X86 Debug\Benchmark.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.lib" /MACHINE:X86 Debug\Benchmark.obj
+         Debug\Camera.obj
          Debug\Clock.obj
          Debug\Collections.obj
+         Debug\Component.obj
          Debug\Crypto.obj
          Debug\DEM.obj
+         Debug\Actor.obj
          Debug\main.obj
          Debug\Math.obj
          Debug\Matrix.obj
          Debug\Quaternion.obj
+         Debug\Renderer.obj
+         Debug\Scene.obj
          Debug\System.obj
+         Debug\Transform.obj
          Debug\Types.obj
          Debug\Vector2.obj
          Debug\Vector3.obj
-         DeusExMachina.vcxproj -> C:\Users\Jamal\Desktop\Home\DEM\DeusExMachina\DeusExMachina\Debug\DeusExMachina.exe
-     1>Done Building Project "C:\Users\Jamal\Desktop\Home\DEM\DeusExMachina\DeusExMachina\DeusExMachina\DeusExMachina.vcxproj" (Build target(s)).
+         DeusExMachina.vcxproj -> C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.exe
+     1>Done Building Project "C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\DeusExMachina\DeusExMachina.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.90
+Time Elapsed 00:00:00.92

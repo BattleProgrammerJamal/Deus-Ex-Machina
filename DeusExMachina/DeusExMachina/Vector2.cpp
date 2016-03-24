@@ -24,6 +24,12 @@ Vector2::~Vector2()
 {
 }
 
+void Vector2::set(float x, float y)
+{
+	this->x = x;
+	this->y = y;
+}
+
 float Vector2::length() const
 {
 	return sqrt(x * x + y * y);

@@ -2,6 +2,8 @@
 
 using namespace std;
 
+using namespace DEM;
+using namespace DEM::Core;
 using namespace DEM::Collections;
 using namespace DEM::Math;
 using namespace DEM::System;
@@ -39,7 +41,7 @@ struct Particle
 			velocity = position - oldPosition;
 			acceleration = force / mass;
 
-			position = position + velocity + acceleration * IG;
+			position = position + velocity + acceleration * IG; 
 
 			oldPosition = Vector3(position);
 			force = force * friction;
@@ -209,22 +211,61 @@ struct ParticleFlow
 		vector<Particle*> allParticles;
 		vector<ParticlePool*> particlePools;
 		DEM_UINT maxThreads;
+}; 
+
+class Pipeline
+{
+	public:
+		Pipeline()
+		{
+			m_id = sm_id;
+			++sm_id;
+			m_proc = new thread(&Pipeline::operator(), this);
+			m_proc->join();
+		}
+
+		virtual void operator()(){};
+
+		DEM_UINT getId() const { return m_id; }
+
+	protected:
+		static DEM_UINT		sm_id;
+		DEM_UINT			m_id;
+		thread*				m_proc;
+
+		atomic<bool> terminated;
+};
+
+DEM_UINT Pipeline::sm_id = 0;
+
+struct HelloPipeline : public Pipeline
+{
+	HelloPipeline()
+	: Pipeline()
+	{
+	}
+
+	void operator()()
+	{
+		for (DEM_UINT i = 0; i < 16; ++i)
+		{ 
+			printf("%d\n", m_id + i * i); 
+		}
+	}
 };
 
 int main(int argc, char** argv)
 {
-	System::Instance();
+	DeusExMachina *app = DeusExMachina::Instance();
 
-	ParticleFlow<128> pf;
+	HelloPipeline test;
 	//for (;;)
-	for (DEM_UINT i = 0; i < 32; ++i)
+	for (DEM_UINT i = 0; i < 16; ++i)
 	{
-		cout << "ParticleFlow updating ..." << endl;
-		pf.update();
-		cout << "ParticleFlow updated !" << endl;
+		test();
 	}
-
-	System::Destroy();
+	
+	DeusExMachina::Destroy();
 	system("pause");
 	return 0;
 }

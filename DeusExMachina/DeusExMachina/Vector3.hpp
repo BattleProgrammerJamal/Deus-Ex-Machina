@@ -19,6 +19,8 @@ namespace DEM
 
 				virtual ~Vector3();
 
+				void set(float x, float y, float z);
+
 				float length() const;
 
 				float distance(const Vector3& v) const;

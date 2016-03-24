@@ -17,6 +17,7 @@ namespace DEM
 		class Crypto
 		{
 			public:
+				/**
 				static DEM_UINT Hash32(std::string key){ return Murmur32(key, 32); }
 
 				static DEM_UINT Murmur32(std::string key, DEM_UINT seed)
@@ -72,6 +73,7 @@ namespace DEM
 
 					return hash;
 				}
+				*/
 		};
 	};
 };

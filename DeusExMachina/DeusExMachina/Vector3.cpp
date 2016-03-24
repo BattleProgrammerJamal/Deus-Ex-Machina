@@ -27,6 +27,13 @@ Vector3::~Vector3()
 {
 }
 
+void Vector3::set(float x, float y, float z)
+{
+	this->x = x;
+	this->y = y;
+	this->z = z;
+}
+
 float Vector3::length() const
 {
 	return sqrt(x * x + y * y + z * z);

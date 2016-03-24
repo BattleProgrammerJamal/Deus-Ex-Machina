@@ -108,8 +108,6 @@ namespace DEM
 				DEM_UINT m_capacity;
 				DEM_UINT m_size;
 		};
-
-
 	};
 };
 

@@ -13,9 +13,9 @@
 #include "Clock.hpp"
 #include "Math.hpp"
 
-#define _DEBUG 1
+#define DEM_DEBUG 1
 
-#ifdef _DEBUG
+#ifdef DEM_DEBUG
 	#include "Benchmark.hpp"
 #endif
 

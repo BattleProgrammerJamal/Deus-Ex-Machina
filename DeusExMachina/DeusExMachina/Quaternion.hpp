@@ -20,6 +20,8 @@ namespace DEM
 				Quaternion(const Quaternion& q);
 				virtual ~Quaternion();
 
+				void set(float x, float y, float z, float w);
+
 				Quaternion& operator=(const Quaternion& q);
 
 				float length() const;
