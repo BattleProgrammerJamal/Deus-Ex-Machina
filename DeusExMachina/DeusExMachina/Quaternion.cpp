@@ -189,7 +189,7 @@ Quaternion& Quaternion::fromAxisAngle(const Vector3& axis, float angle)
 	return *this;
 }
 
-void Quaternion::setRotationMatrix(float *R)
+void Quaternion::setRotationMatrix(float *R) const
 {
 	R[0] = 1.0f - 2.0f * (y * y) - 2.0f * (z * z);		R[4] = 2.0f * x * y - 2.0f * z * w;					R[8] = 2.0f * x * z + 2.0f * y * w;					R[12] = 0.0f;
 	R[1] = 2.0f * x * y + 2.0f * z * w;					R[5] = 1.0f - 2.0f * (x * x) - 2.0f * (z * z);		R[9] = 2.0f * y * z - 2.0f * x * w;					R[13] = 0.0f;

@@ -108,6 +108,122 @@ namespace DEM
 				DEM_UINT m_capacity;
 				DEM_UINT m_size;
 		};
+
+		template <typename T>
+		struct Node
+		{
+			DEM_UINT key;
+			T value;
+			Node* left;
+			Node* right;
+
+			Node()
+			{
+				left = 0;
+				right = 0;
+			}
+
+			Node(T value)
+			{
+				this->value = value;
+				left = 0;
+				right = 0;
+			}
+
+			virtual ~Node()
+			{
+			}
+		};
+
+		template <typename T>
+		class Tree
+		{
+			public:
+				Tree()
+				{
+					root = new Node<T>();
+					root->key = 0;
+				}
+
+				Tree(const T& data)
+				{
+					root = new Node<T>(data);
+					root->key = 0;
+				}
+
+				virtual ~Tree()
+				{
+				}
+
+				void add(const T& data)
+				{
+					Node<T> *it = root;
+					while (it != 0)
+					{
+						if (it->left != 0)
+						{
+							it->left = new Node<T>(data);
+							it->key = it->key + 1;
+							break;
+						}
+						if (it->right != 0)
+						{
+							it->right = new Node<T>(data);
+							it->key = it->key + 1;
+							break;
+						}
+
+						if (it->left != 0)
+						{
+							it = it->left;
+						}
+						else
+						{
+							if (it->right != 0)
+							{
+								it = it->right;
+							}
+							else
+							{
+								break;
+							}
+						}
+					}
+				}
+
+				std::string str()
+				{
+					std::strstream out;
+
+					Node<T> *it = root;
+					while (it != 0)
+					{
+						out << it->value << "\n";
+
+						if (it->left != 0)
+						{
+							it = it->left;
+						}
+						else
+						{
+							if (it->right != 0)
+							{
+								it = it->right;
+							}
+							else
+							{
+								break;
+							}
+						}
+					}
+
+					out << '\0';
+					return out.str();
+				}
+
+			private:
+				Node<T> *root;
+		};
 	};
 };
 

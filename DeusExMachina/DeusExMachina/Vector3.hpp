@@ -30,7 +30,7 @@ namespace DEM
 
 				float dot(const Vector3& v);
 
-				Vector3 cross(const Vector3& v);
+				Vector3 cross(const Vector3& v) const;
 
 				friend std::ostream& operator<<(std::ostream& out, const Vector3& v);
 

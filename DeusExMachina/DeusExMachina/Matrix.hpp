@@ -21,7 +21,7 @@ namespace DEM
 					m_l = L;
 					m_c = C;
 					m_data = new T[m_l * m_c];
-					zero();
+					identity();
 				}
 
 				Matrix(const Matrix<T>& m)
@@ -175,43 +175,106 @@ namespace DEM
 				static Matrix<float> translation(const Vector3& v)
 				{
 					Matrix<float> T(4, 4);
-					T.identity();
+
+					T.setData(T.index(0, 0), 1.0f);
+					T.setData(T.index(1, 1), 1.0f);
+					T.setData(T.index(2, 2), 1.0f);
+					T.setData(T.index(3, 3), 1.0f);
+
+					T.setData(T.index(0, 3), v.x);
+					T.setData(T.index(1, 3), v.y);
+					T.setData(T.index(2, 3), v.z);
+
 					return T;
 				}
 
 				static Matrix<float> rotation(const Quaternion& q)
 				{
 					Matrix<float> T(4, 4);
-					T.identity();
+					q.setRotationMatrix(T.ptr_value());
 					return T;
 				}
 
 				static Matrix<float> scale(const Vector3& v)
 				{
 					Matrix<float> T(4, 4);
-					T.identity();
+
+					T.setData(T.index(0, 0), v.x);
+					T.setData(T.index(1, 1), v.y);
+					T.setData(T.index(2, 2), v.z);
+					T.setData(T.index(3, 3), 1.0f);
+
 					return T;
 				}
 
 				static Matrix<float> projOrtho(DEM_UINT left, DEM_UINT right, DEM_UINT top, DEM_UINT down, float cnear, float cfar)
 				{
 					Matrix<float> T(4, 4);
-					T.identity();
+
+					T.setData(T.index(0, 0), 2.0f / (right - left));
+					T.setData(T.index(0, 3), -(right + left) / (right - left));
+
+					T.setData(T.index(1, 1), 2.0f / (top - down));
+					T.setData(T.index(1, 3), -(top + down) / (top - down));
+
+					T.setData(T.index(2, 2), -2.0f / (cfar - cnear));
+					T.setData(T.index(2, 3), -(cfar + cnear) / (cfar - cnear));
+
+					T.setData(T.index(3, 3), 1.0f);
+
 					return T;
 				}
 
 				static Matrix<float> projPersp(float fov, float aspect, float cnear, float cfar)
 				{
 					Matrix<float> T(4, 4);
-					T.identity();
+
+					const float tanHalfFOV = tanf(rad<float>(fov / 2.0f));
+
+					T.setData(T.index(0, 0), 1.0f / (tanHalfFOV * aspect));
+					T.setData(T.index(1, 1), 1.0f / tanHalfFOV);
+					T.setData(T.index(2, 2), (-cnear - cfar) / (cnear - cfar));
+					T.setData(T.index(2, 3), (2.0f * cfar * cnear) / (cnear - cfar));
+
+					T.setData(T.index(3, 2), 1.0f);
+
 					return T;
 				}
 
-				static Matrix<float> view(const Vector3& eye, const Vector3& target, const Vector3& up)
+				static Matrix<float> view(Vector3& eye, Vector3& target, Vector3& up)
 				{
 					Matrix<float> T(4, 4);
-					T.identity();
+
+					Vector3 zAxis = eye - target;
+					zAxis.normalize();
+					Vector3 xAxis = up.cross(zAxis);
+					xAxis.normalize();
+					Vector3 yAxis = zAxis.cross(xAxis);
+
+					T.setData(T.index(0, 0), xAxis.x);
+					T.setData(T.index(0, 1), yAxis.x);
+					T.setData(T.index(0, 2), zAxis.x);
+
+					T.setData(T.index(1, 0), xAxis.y);
+					T.setData(T.index(1, 1), yAxis.y);
+					T.setData(T.index(1, 2), zAxis.y);
+
+					T.setData(T.index(2, 0), xAxis.z);
+					T.setData(T.index(2, 1), yAxis.z);
+					T.setData(T.index(2, 2), zAxis.z);
+
+					T.setData(T.index(3, 0), -xAxis.dot(eye));
+					T.setData(T.index(3, 1), -yAxis.dot(eye));
+					T.setData(T.index(3, 2), -zAxis.dot(eye));
+
+					T.setData(T.index(3, 3), 1);
+
 					return T;
+				}
+
+				T* ptr_value()
+				{
+					return m_data;
 				}
 
 			private:

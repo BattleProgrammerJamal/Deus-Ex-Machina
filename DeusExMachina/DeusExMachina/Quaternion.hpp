@@ -57,7 +57,7 @@ namespace DEM
 
 				Quaternion& fromAxisAngle(const Vector3& axis, float angle);
 
-				void setRotationMatrix(float *R);
+				void setRotationMatrix(float *R) const;
 		};
 	};
 };

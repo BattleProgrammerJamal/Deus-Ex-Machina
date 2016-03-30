@@ -61,7 +61,7 @@ float Vector2::dot(const Vector2& v)
 	return (x * x) + (y * y);
 }
 
-Vector2 Vector2::cross(const Vector2& v)
+Vector2 Vector2::cross(const Vector2& v) const
 {
 	return Vector2(y * v.x - v.y * x, x * v.y - v.x * y);
 }

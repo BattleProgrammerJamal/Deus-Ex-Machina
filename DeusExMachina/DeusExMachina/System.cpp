@@ -1,3 +1,4 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include "System.hpp"
 
 using namespace DEM::System;
@@ -24,20 +25,18 @@ void System::Destroy()
 
 System::System()
 {
-	/** Init Sub Systems APIs
-		OpenGL / Dx
-		PhysX / Bullet
-		Drivers
-		...
-	*/
 }
 
 System::~System()
 {
-	/** Free Sub Systems APIs
-		OpenGL / Dx
-		PhysX / Bullet
-		Drivers
-		...
-	*/
+}
+
+void System::initAudioAPI()
+{
+
+}
+
+void System::initUiAPI()
+{
+
 }
