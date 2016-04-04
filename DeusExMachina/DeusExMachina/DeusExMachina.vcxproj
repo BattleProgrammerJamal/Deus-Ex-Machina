@@ -70,6 +70,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Asset.cpp" />
+    <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -86,14 +90,21 @@
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="System.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Types.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Asset.hpp" />
+    <ClInclude Include="Geometry.hpp" />
+    <ClInclude Include="Image.hpp" />
+    <ClInclude Include="Material.hpp" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="Camera.hpp" />
@@ -110,8 +121,11 @@
     <ClInclude Include="Pipeline.hpp" />
     <ClInclude Include="Quaternion.hpp" />
     <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="Resource.hpp" />
     <ClInclude Include="Scene.hpp" />
+    <ClInclude Include="Shader.hpp" />
     <ClInclude Include="System.hpp" />
+    <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Transform.hpp" />
     <ClInclude Include="Types.hpp" />
     <ClInclude Include="Vector2.hpp" />

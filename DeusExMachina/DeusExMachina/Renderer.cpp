@@ -54,6 +54,12 @@ Renderer& Renderer::RenderActor(DEM_UINT index)
 	if (actor)
 	{
 		actor->Render();
+
+		std::vector<Actor*> children = actor->getChildren();
+		for (DEM_UINT i = 0; i < children.size(); ++i)
+		{
+			children.at(i)->Render();
+		}
 	}
 	return *this;
 }
@@ -64,6 +70,12 @@ Renderer& Renderer::UpdateActor(DEM_UINT index)
 	if (actor)
 	{
 		actor->Update();
+
+		std::vector<Actor*> children = actor->getChildren();
+		for (DEM_UINT i = 0; i < children.size(); ++i)
+		{
+			children.at(i)->Update();
+		}
 	}
 	return *this;
 }
@@ -77,6 +89,16 @@ Renderer& Renderer::StartComponents(Actor *actor)
 		{
 			comps.at(i)->Start();
 		}
+
+		std::vector<Actor*> children = actor->getChildren();
+		for (DEM_UINT i = 0; i < children.size(); ++i)
+		{
+			std::vector<Component*> comps = children.at(i)->getComponents();
+			for (DEM_UINT i = 0; i < comps.size(); ++i)
+			{
+				comps.at(i)->Start();
+			}
+		}
 	}
 	return *this;
 }
@@ -89,6 +111,16 @@ Renderer& Renderer::UpdateComponent(Actor *actor, DEM_UINT index)
 		for (DEM_UINT i = 0; i < comps.size(); ++i)
 		{
 			comps.at(i)->Update();
+		}
+
+		std::vector<Actor*> children = actor->getChildren();
+		for (DEM_UINT i = 0; i < children.size(); ++i)
+		{
+			std::vector<Component*> comps = children.at(i)->getComponents();
+			for (DEM_UINT i = 0; i < comps.size(); ++i)
+			{
+				comps.at(i)->Update();
+			}
 		}
 	}
 	return *this;

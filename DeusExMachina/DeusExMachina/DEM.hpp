@@ -14,6 +14,10 @@
 #include <STB/stb_image.h>
 
 #include "System.hpp"
+#include "Asset.hpp"
+#include "Shader.hpp"
+#include "Geometry.hpp"
+#include "Material.hpp"
 #include "Pipeline.hpp"
 #include "Component.hpp"
 #include "Transform.hpp"

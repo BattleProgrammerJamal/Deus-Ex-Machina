@@ -11,7 +11,11 @@
 #include <SFML/OpenGL.hpp>
 #include <STB/stb_image.h>
 
+#include "Math.hpp"
+
 #include "Actor.hpp"
+
+#include "Clock.hpp"
 
 namespace DEM
 {
@@ -28,6 +32,7 @@ namespace DEM
 				void Update();
 
 			protected:
+				System::Clock clock;
 		};
 	};
 };

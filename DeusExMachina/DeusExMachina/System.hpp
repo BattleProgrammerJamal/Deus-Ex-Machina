@@ -13,6 +13,7 @@
 #include "Clock.hpp"
 #include "Math.hpp"
 #include "Profiler.hpp"
+#include "Resource.hpp"
 
 #define OPENGL_MAJOR_VERSION 4
 #define OPENGL_MINOR_VERSION 3

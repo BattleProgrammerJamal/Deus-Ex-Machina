@@ -8,6 +8,7 @@ DEM_UINT Actor::sm_id = 0;
 
 Actor::Actor(string name)
 {
+	m_parent = 0;
 	m_id = sm_id;
 	sm_id++;
 	m_name = name;
@@ -24,6 +25,7 @@ Actor::Actor(string name)
 
 Actor::Actor(const Actor& a)
 {
+	m_parent = 0;
 	m_id = sm_id;
 	sm_id++;
 	m_name = a.m_name;
@@ -78,4 +80,120 @@ Actor& Actor::addComponent(Component *comp)
 	comp->setParent(this);
 	m_components.emplace_back(comp);
 	return *this;
+}
+
+Actor* Actor::getParent() const
+{
+	return m_parent;
+}
+
+void Actor::setParent(Actor *actor)
+{
+	m_parent = actor;
+	m_parent->addChild(this);
+}
+
+std::vector<Actor*> Actor::getChildren() const
+{
+	return m_children;
+}
+
+void Actor::setChildren(std::vector<Actor*> children)
+{
+	m_children = children;
+}
+
+void Actor::addChild(Actor *actor)
+{
+	m_children.emplace_back(actor);
+	actor->m_parent = this;
+}
+
+void Actor::removeChildById(DEM_UINT id)
+{
+	bool found = false;
+	std::vector<Actor*>::iterator it;
+	for (it = m_children.begin(); it != m_children.end(); ++it)
+	{
+		if ((*it)->getId() == id)
+		{
+			found = true;
+			break;
+		}
+	}
+	if (found)
+	{
+		m_children.erase(it, it + 1);
+	}
+}
+void Actor::removeChildByUid(DEM_UINT uid)
+{
+	bool found = false;
+	std::vector<Actor*>::iterator it;
+	for (it = m_children.begin(); it != m_children.end(); ++it)
+	{
+		if ((*it)->getUid() == uid)
+		{
+			found = true;
+			break;
+		}
+	}
+	if (found)
+	{
+		m_children.erase(it, it + 1);
+	}
+}
+void Actor::removeChildByName(std::string name)
+{
+	bool found = false;
+	std::vector<Actor*>::iterator it;
+	for (it = m_children.begin(); it != m_children.end(); ++it)
+	{
+		if ((*it)->getName() == name)
+		{
+			found = true;
+			break;
+		}
+	}
+	if (found)
+	{
+		m_children.erase(it, it + 1);
+	}
+}
+
+Actor* Actor::findChildById(DEM_UINT id)
+{
+	std::vector<Actor*>::iterator it;
+	for (it = m_children.begin(); it != m_children.end(); ++it)
+	{
+		if ((*it)->getId() == id)
+		{
+			return (*it);
+		}
+	}
+	return 0;
+}
+Actor* Actor::findChildByUid(DEM_UINT uid)
+{
+	std::vector<Actor*>::iterator it;
+	for (it = m_children.begin(); it != m_children.end(); ++it)
+	{
+		if ((*it)->getUid() == uid)
+		{
+			return (*it);
+		}
+	}
+	return 0;
+}
+Actor* Actor::findChildByName(std::string name)
+{
+	std::vector<Actor*>::iterator it;
+	for (it = m_children.begin(); it != m_children.end(); ++it)
+	{
+		if ((*it)->getName() == name)
+		{
+			return (*it);
+		}
+	}
+	return 0;
 }

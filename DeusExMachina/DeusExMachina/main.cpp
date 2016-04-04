@@ -18,6 +18,8 @@ int main(int argc, char** argv)
 
 	Mesh *m = new Mesh("Jamal");
 	scene->add(m);
+	Mesh *n = new Mesh("Ordos");
+	m->addChild(n);
 
 	(*app)();
 
