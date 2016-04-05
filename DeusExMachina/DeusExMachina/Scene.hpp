@@ -24,7 +24,7 @@ namespace DEM
 				Actor* get(std::string name);
 				Actor* get(DEM_UINT id);
 				std::vector<Actor*>::iterator* findById(DEM_UINT id);
-				std::vector<Actor*>::iterator* findById(std::string name);
+				std::vector<Actor*>::iterator* findByName(std::string name);
 				Scene& remove(Actor *actor);
 
 				DEM_UINT getId() const;

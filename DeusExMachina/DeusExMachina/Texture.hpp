@@ -38,10 +38,13 @@ namespace DEM
 				DEM_TEXTURE_TYPE getType() const;
 				void setType(DEM_TEXTURE_TYPE type);
 
+				bool isLoaded() const;
+
 				void bind();
 				void unbind();
 
 			private:
+				bool				m_loaded;
 				DEM_TEXTURE_TYPE	m_type;
 				GLuint				m_target;
 				GLuint				m_texture;

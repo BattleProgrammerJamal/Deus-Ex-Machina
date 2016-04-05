@@ -8,6 +8,7 @@ Texture::Texture(DEM_UINT unit)
 	m_texture = 0;
 	m_unit = unit;
 	m_type = DEM_TEXTURE_2D;
+	m_loaded = false;
 }
 
 Texture::~Texture()
@@ -20,6 +21,8 @@ void Texture::load(std::vector<std::string> paths)
 	{
 		return;
 	}
+
+	m_loaded = false;
 
 	Image img;
 
@@ -70,6 +73,8 @@ void Texture::load(std::vector<std::string> paths)
 			glBindTexture(m_target, 0);
 		break;
 	}
+
+	m_loaded = true;
 }
 
 GLuint Texture::getTexture() const
@@ -95,6 +100,11 @@ DEM_TEXTURE_TYPE Texture::getType() const
 void Texture::setType(DEM_TEXTURE_TYPE type)
 {
 	m_type = type;
+}
+
+bool Texture::isLoaded() const
+{
+	return m_loaded;
 }
 
 void Texture::bind()

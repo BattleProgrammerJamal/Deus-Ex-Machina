@@ -32,14 +32,13 @@ int main(int argc, char** argv)
 	ProjectSettings *settings = new ProjectSettings;
 	DeusExMachina *app = DeusExMachina::Instance(settings);
 
-	Renderer *renderer = app->getRenderer();
-	Scene *scene = renderer->getScene();
-	
-	Mesh *m = new Mesh(new Geometry(), new Material(), "Test");
-	m->addComponent(new Rotator());
-	scene->add(m);
-
 	(*app)([](DeusExMachina *app){
+		Renderer *renderer = app->getRenderer();
+		Scene *scene = renderer->getScene();
+
+		Mesh *m = new Mesh(new Geometry(), new Material(), "Test");
+		m->addComponent(new Rotator());
+		scene->add(m);
 	});
 
 	DeusExMachina::Destroy();

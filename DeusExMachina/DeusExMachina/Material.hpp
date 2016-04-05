@@ -2,11 +2,14 @@
 #define MATERIAL_HPP
 
 #include <iostream>
+#include <array>
 
 #include "Asset.hpp"
 #include "Color.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
+
+#define DEM_MAXIMUM_TEXTURES 16
 
 namespace DEM
 {
@@ -17,15 +20,16 @@ namespace DEM
 			public:
 				Math::Color baseColor;
 
-				Material(std::string vs = DEFAULT_PATH_VERTEX_SHADER, std::string fs = DEFAULT_PATH_FRAGMENT_SHADER);
+				Material();
+				Material(std::string vs, std::string fs);
 				virtual ~Material();
 
 				void bind();
 				void unbind();
 
 			protected:
-				// Texture list
-				Shader*		m_shaderProgram;
+				std::array<Texture*, DEM_MAXIMUM_TEXTURES>		m_textures;
+				Shader*											m_shaderProgram;
 		};
 	};
 };

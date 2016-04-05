@@ -207,8 +207,10 @@ namespace DEM
 					return T;
 				}
 
-				static Matrix<float> projOrtho(DEM_UINT left, DEM_UINT right, DEM_UINT top, DEM_UINT down, float cnear, float cfar)
+				static Matrix<float> projOrtho(DEM_UINT _left, DEM_UINT _right, DEM_UINT _top, DEM_UINT _down, float cnear, float cfar)
 				{
+					float left = _left, right = _right, top = _top, down = _down;
+
 					Matrix<float> T(4, 4);
 
 					T.setData(T.index(0, 0), 2.0f / (right - left));

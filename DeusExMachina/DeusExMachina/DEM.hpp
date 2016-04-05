@@ -14,6 +14,7 @@
 #include <STB/stb_image.h>
 
 #include "System.hpp"
+#include "File.hpp"
 #include "Pipeline.hpp"
 #include "Component.hpp"
 #include "Resource.hpp"

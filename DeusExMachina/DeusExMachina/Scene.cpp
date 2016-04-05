@@ -65,7 +65,7 @@ Actor* Scene::get(DEM_UINT id)
 
 std::vector<Actor*>::iterator* Scene::findById(DEM_UINT id)
 {
-	std::vector<Actor*>::iterator it = m_children.begin();
+	std::vector<Actor*>::iterator &it = m_children.begin();
 	for (; it != m_children.end(); ++it)
 	{
 		if ((*it)->getId() == id)
@@ -76,9 +76,9 @@ std::vector<Actor*>::iterator* Scene::findById(DEM_UINT id)
 	return 0;
 }
 
-std::vector<Actor*>::iterator* Scene::findById(std::string name)
+std::vector<Actor*>::iterator* Scene::findByName(std::string name)
 {
-	std::vector<Actor*>::iterator it = m_children.begin();
+	std::vector<Actor*>::iterator &it = m_children.begin();
 	for (; it != m_children.end(); ++it)
 	{
 		if ((*it)->getName() == name)
