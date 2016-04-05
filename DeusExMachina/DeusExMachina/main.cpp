@@ -8,6 +8,25 @@ using namespace DEM::Collections;
 using namespace DEM::Math;
 using namespace DEM::System;
 
+class Rotator : public DEM::Core::Component
+{
+	public:
+		Rotator()
+			: DEM::Core::Component()
+		{
+		}
+
+		void Start()
+		{
+			getParent()->transform->setScale(DEM::Math::Vector3(0.3f, 0.3f, 0.3f));
+		}
+
+		void Update()
+		{
+			getParent()->transform->Rotate(DEM::Math::Vector3(0.0f, 1.0f, 0.0f), 0.005f);
+		}
+};
+
 int main(int argc, char** argv)
 {
 	ProjectSettings *settings = new ProjectSettings;
@@ -15,13 +34,13 @@ int main(int argc, char** argv)
 
 	Renderer *renderer = app->getRenderer();
 	Scene *scene = renderer->getScene();
-
-	Mesh *m = new Mesh("Jamal");
+	
+	Mesh *m = new Mesh(new Geometry(), new Material(), "Test");
+	m->addComponent(new Rotator());
 	scene->add(m);
-	Mesh *n = new Mesh("Ordos");
-	m->addChild(n);
 
-	(*app)();
+	(*app)([](DeusExMachina *app){
+	});
 
 	DeusExMachina::Destroy();
 	delete settings;

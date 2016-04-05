@@ -3,14 +3,17 @@
 
 #include <iostream>
 
+#include "Asset.hpp"
+
 namespace DEM
 {
 	namespace Core
 	{
-		class Geometry
+		class Geometry : public Asset
 		{
 			public:
-
+				Geometry();
+				virtual ~Geometry();
 
 			protected:
 

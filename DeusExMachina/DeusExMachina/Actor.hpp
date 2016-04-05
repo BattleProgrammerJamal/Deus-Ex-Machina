@@ -8,6 +8,7 @@
 #include "Collections.hpp"
 #include "Component.hpp"
 #include "Crypto.hpp"
+#include "Transform.hpp"
 
 namespace DEM
 {
@@ -16,6 +17,8 @@ namespace DEM
 		class Actor
 		{
 			public:
+				Transform*		transform;
+
 				Actor(std::string name = "Actor");
 				Actor(const Actor& a);
 				virtual ~Actor();

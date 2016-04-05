@@ -21,6 +21,7 @@ Actor::Actor(string name)
 		key[i] = (char)n;
 	}
 	m_uid = Crypto::Hash32(key);
+	transform = new Transform();
 }
 
 Actor::Actor(const Actor& a)
@@ -38,8 +39,8 @@ Actor::Actor(const Actor& a)
 		key[i] = (char)n;
 	}
 	m_uid = Crypto::Hash32(key);
-
 	m_components = a.m_components;
+	transform = new Transform();
 }
 
 Actor::~Actor()

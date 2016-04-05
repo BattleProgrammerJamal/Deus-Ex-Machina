@@ -56,7 +56,7 @@ System::System* DeusExMachina::getSystem() const
 	return m_system;
 }
 
-void DeusExMachina::operator()()
+void DeusExMachina::operator()(void(*OnDisplayContextInitialized)(DeusExMachina*))
 {
 	for (DEM_UINT i = 0; i < m_renderer->getScene()->size(); ++i)
 	{
@@ -67,7 +67,7 @@ void DeusExMachina::operator()()
 	m_updateActorsPipeline = new UpdateActorsPipeline(this);
 	m_updateActorComponentsPipeline = new UpdateActorComponentsPipeline(this);
 
-	m_renderActorsPipeline->create();
+	m_renderActorsPipeline->create(OnDisplayContextInitialized);
 	m_updateActorsPipeline->create();
 	m_updateActorComponentsPipeline->create();
 

@@ -7,19 +7,21 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <gl/glew.h>
+#include <glew.h>
 #include <gl/GL.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include <STB/stb_image.h>
 
 #include "System.hpp"
-#include "Asset.hpp"
-#include "Shader.hpp"
-#include "Geometry.hpp"
-#include "Material.hpp"
 #include "Pipeline.hpp"
 #include "Component.hpp"
+#include "Resource.hpp"
+#include "Image.hpp"
+#include "Asset.hpp"
+#include "Texture.hpp"
+#include "Material.hpp"
+#include "Geometry.hpp"
 #include "Transform.hpp"
 #include "Actor.hpp"
 #include "Mesh.hpp"
@@ -120,7 +122,7 @@ namespace DEM
 
 			Core::Renderer* getRenderer() { return m_renderer; }
 
-			void operator()();
+			void operator()(void (*OnDisplayContextInitialized)(DeusExMachina*) = 0);
 
 			ProjectSettings* settings() const { return m_settings; }
 			void setSettings(ProjectSettings *settings) { m_settings = settings; }
@@ -146,7 +148,7 @@ namespace DEM
 				app = _app;
 			}
 
-			void RenderActorsPipeline::operator()()
+			void RenderActorsPipeline::operator()(void(*OnDisplayContextInitialized)(DeusExMachina*))
 			{
 				sf::ContextSettings settings;
 				settings.depthBits = 24;
@@ -189,6 +191,11 @@ namespace DEM
 				std::cout << "GPU Version : " << glGetString(GL_RENDERER) << std::endl;
 #endif
 
+				if (OnDisplayContextInitialized != 0)
+				{
+					OnDisplayContextInitialized(app);
+				}
+
 				while (state())
 				{
 					if (window->pollEvent(evt))
@@ -212,9 +219,9 @@ namespace DEM
 				}
 			}
 
-			void RenderActorsPipeline::create()
+			void RenderActorsPipeline::create(void(*OnDisplayContextInitialized)(DeusExMachina*))
 			{
-				m_proc = new std::thread(&RenderActorsPipeline::operator(), this);
+				m_proc = new std::thread(&RenderActorsPipeline::operator(), this, OnDisplayContextInitialized);
 			}
 
 			void RenderActorsPipeline::run()

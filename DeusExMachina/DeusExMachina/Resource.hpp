@@ -3,16 +3,23 @@
 
 #include <iostream>
 
+#include "Types.hpp"
+
 namespace DEM
 {
-	namespace System
+	namespace Core
 	{
 		class Resource
 		{
 			public:
+				Resource();
+				virtual ~Resource();
 
+				virtual Resource& load();
 
 			protected:
+				static DEM_UINT		sm_id;
+				DEM_UINT			m_id;
 
 		};
 	};

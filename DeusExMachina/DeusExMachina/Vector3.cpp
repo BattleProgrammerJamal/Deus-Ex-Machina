@@ -130,7 +130,7 @@ Vector3& Vector3::operator/=(const Vector3& v)
 {
 	x /= (v.x == 0.0f) ? 1.0f : v.x;
 	y /= (v.y == 0.0f) ? 1.0f : v.y;
-	z /= v.z;
+	z /= (v.z == 0.0f) ? 1.0f : v.z;
 	return *this;
 }
 
