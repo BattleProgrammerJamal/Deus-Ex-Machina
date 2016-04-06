@@ -4,6 +4,11 @@
 #include <iostream>
 #include <strstream>
 
+#include <glew.h>
+#include <gl/GL.h>
+#include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+
 #include "Scene.hpp"
 #include "Camera.hpp"
 

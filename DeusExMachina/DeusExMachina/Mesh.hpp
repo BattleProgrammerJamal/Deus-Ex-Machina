@@ -16,6 +16,7 @@
 #include "Material.hpp"
 #include "Actor.hpp"
 #include "Clock.hpp"
+#include "DEM.hpp"
 
 namespace DEM
 {
@@ -24,7 +25,10 @@ namespace DEM
 		class Mesh : public Actor
 		{
 			public:
+				GLuint drawStyle;
+
 				Mesh(Geometry *geometry, Material *material, std::string name = "Actor");
+				Mesh(const Mesh& mesh);
 				~Mesh();
 
 				Geometry* getGeometry() const;

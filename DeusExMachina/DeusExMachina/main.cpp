@@ -35,8 +35,20 @@ int main(int argc, char** argv)
 	(*app)([](DeusExMachina *app){
 		Renderer *renderer = app->getRenderer();
 		Scene *scene = renderer->getScene();
+		PerspectiveCamera *camera = static_cast<PerspectiveCamera*>(renderer->getCamera());
 
-		Mesh *m = new Mesh(new Geometry(), new Material(), "Test");
+		camera->eye.z = 10.0f;
+
+		Geometry *geo = new Geometry({
+			new Vertex(Vector3(-1.0f, 1.0f, 0.0f)),
+			new Vertex(Vector3(-1.0f, -1.0f, 0.0f)),
+			new Vertex(Vector3(1.0f, 1.0f, 0.0f)),
+			new Vertex(Vector3(1.0f, -1.0f, 0.0f))
+		}, { 0, 1, 2, 3 });
+		Material *mat = new PhongMaterial(Color(1.0f, 1.0f, 0.0f, 1.0f), Color(0.0f, 1.0f, 0.0f, 1.0f), Color(1.0f, 1.0f, 1.0f, 1.0f), 50.0f);
+		mat->baseColor.set(0.0f, 1.0f, 0.0f, 1.0f);
+		Mesh *m = new Mesh(geo, mat, "Test");
+		m->drawStyle = GL_TRIANGLE_STRIP;
 		m->addComponent(new Rotator());
 		scene->add(m);
 	});

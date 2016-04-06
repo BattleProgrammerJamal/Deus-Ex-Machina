@@ -15,6 +15,17 @@ Mesh::Mesh(Geometry *geometry, Material *material, string name)
 	++sm_id;
 	m_geometry = geometry;
 	m_material = material;
+	drawStyle = GL_TRIANGLES;
+	clock->start();
+}
+
+Mesh::Mesh(const Mesh& mesh)
+{
+	m_id = sm_id;
+	++sm_id;
+	m_geometry = new Geometry(*mesh.getGeometry());
+	m_material = new Material(*mesh.getMaterial());
+	drawStyle = mesh.drawStyle;
 	clock->start();
 }
 
@@ -28,27 +39,34 @@ void Mesh::Render()
 {
 	float t = clock->seconds();
 
-	glRotatef(0.05f, 0.0f, 1.0f, 0.0f);
+	Renderer *renderer = DeusExMachina::Instance()->getRenderer();
+	Camera *camera = renderer->getCamera();
+	Scene *scene = renderer->getScene();
 
-	static float theta = 0.0f;
-	static float phi = 0.0f;
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glBegin(GL_LINES);
-	for (DEM_UINT i = 0; i < 64; ++i)
-		{
-			for (DEM_UINT j = 0; j < 64; ++j)
-			{
-				theta = 2.0f * PI * i / 64;
-				phi = PI * j / 64;
+	m_material->bind();
+	GLuint programID = m_material->getShaderProgram()->getProgram();
 
-				glVertex3f(
-					0.5f * sin(phi) * (float)cos(i&j),
-					0.5f * cos(theta*(((int)phi)&(int)t)) * (float)sin(i << j&(int)t),
-					0.5f * sin(theta - phi * t)
-				);
-			}
-		}
-	glEnd();
+	GLuint worldLocation = glGetUniformLocation(programID, "u_world");
+	glUniformMatrix4fv(worldLocation, 1, GL_FALSE, transform->World().ptr_value());
+
+	GLuint viewLocation = glGetUniformLocation(programID, "u_view");
+	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, camera->getView().ptr_value());
+
+	GLuint projLocation = glGetUniformLocation(programID, "u_proj");
+	glUniformMatrix4fv(projLocation, 1, GL_FALSE, camera->getProj().ptr_value());
+
+	GLuint timeLocation = glGetUniformLocation(programID, "time");
+	glUniform1f(timeLocation, t);
+
+	Vector3 eye = static_cast<PerspectiveCamera*>(camera)->eye;
+	GLuint eyeLocation = glGetUniformLocation(programID, "u_eye");
+	glUniform3f(eyeLocation, eye.x, eye.y, eye.z);
+
+	m_geometry->bind();
+	glDrawElements(drawStyle, m_geometry->getIndices().size(), GL_UNSIGNED_INT, (const void*)0);
+	m_geometry->unbind();
+
+	m_material->unbind();
 }
 
 void Mesh::Update()

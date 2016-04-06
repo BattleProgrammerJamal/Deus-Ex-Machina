@@ -11,15 +11,15 @@ namespace DEM
 		class Color
 		{
 			public:
-				float r, g, b;
+				float r, g, b, a;
 
 				Color();
-				Color(float r, float g, float b);
+				Color(float r, float g, float b, float a);
 				Color(const Color& v);
 
 				virtual ~Color();
 
-				void set(float r, float g, float b);
+				void set(float r, float g, float b, float a);
 
 				float length() const;
 

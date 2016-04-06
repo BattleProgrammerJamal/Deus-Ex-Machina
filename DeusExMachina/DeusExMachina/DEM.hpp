@@ -22,6 +22,11 @@
 #include "Asset.hpp"
 #include "Texture.hpp"
 #include "Material.hpp"
+#include "LambertMaterial.hpp"
+#include "PhongMaterial.hpp"
+#include "Light.hpp"
+#include "PointLight.hpp"
+#include "DirectionalLight.hpp"
 #include "Geometry.hpp"
 #include "Transform.hpp"
 #include "Actor.hpp"
@@ -128,6 +133,16 @@ namespace DEM
 			ProjectSettings* settings() const { return m_settings; }
 			void setSettings(ProjectSettings *settings) { m_settings = settings; }
 
+			GLuint getUBO() const
+			{
+				return m_ubo;
+			}
+
+			void setUBO(GLuint ubo)
+			{
+				m_ubo = ubo;
+			}
+
 		private:
 			DeusExMachina(ProjectSettings *settings);
 
@@ -138,6 +153,7 @@ namespace DEM
 			RenderActorsPipeline*			m_renderActorsPipeline;
 			UpdateActorsPipeline*			m_updateActorsPipeline;
 			UpdateActorComponentsPipeline*	m_updateActorComponentsPipeline;
+			GLuint							m_ubo;
 	};
 
 	class RenderActorsPipeline : public Core::Pipeline
@@ -192,6 +208,15 @@ namespace DEM
 				std::cout << "GPU Version : " << glGetString(GL_RENDERER) << std::endl;
 #endif
 
+				static const DEM_UINT UBO_SIZE = sizeof(float) * (16 + 16);
+
+				GLuint ubo = app->getUBO();
+				glGenBuffers(1, &ubo);
+				glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+				glBufferData(GL_UNIFORM_BUFFER, UBO_SIZE, 0, GL_STREAM_DRAW);
+				glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo);
+				glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+
 				if (OnDisplayContextInitialized != 0)
 				{
 					OnDisplayContextInitialized(app);
@@ -206,6 +231,15 @@ namespace DEM
 							Pipeline::command(Core::KILL_ALL);
 						}
 					}
+
+					DEM::Core::Camera *camera = app->getRenderer()->getCamera();
+					
+					/*
+					glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+					glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float) * 16, camera->getView().ptr_value());
+					glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float) * 16, sizeof(float) * 16, camera->getProj().ptr_value());
+					glBindBuffer(GL_UNIFORM_BUFFER, 0);
+					*/
 
 					glViewport(0, 0, parameters->width, parameters->height);
 					glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

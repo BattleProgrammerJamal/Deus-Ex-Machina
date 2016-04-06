@@ -7,6 +7,7 @@ DeusExMachina* DeusExMachina::sm_instance = 0;
 
 DeusExMachina::DeusExMachina(ProjectSettings *settings)
 {
+	m_ubo = 0;
 	m_settings = settings;
 
 	m_system = System::System::Instance();

@@ -5,29 +5,24 @@ using namespace DEM::Math;
 
 Camera::Camera()
 {
-	m_view = new Matrix<float>(4, 4);
-	m_proj = new Matrix<float>(4, 4);
+	m_view = Matrix<float>(4, 4);
+	m_proj = Matrix<float>(4, 4);
 }
 
 Camera::~Camera()
 {
-	delete m_view;
-	m_view = 0;
-
-	delete m_proj;
-	m_proj = 0;
 }
 
 void Camera::update()
 {
 }
 
-Matrix<float>* Camera::getView() const
+Matrix<float> Camera::getView() const
 {
 	return m_view;
 }
 
-Matrix<float>* Camera::getProj() const
+Matrix<float> Camera::getProj() const
 {
 	return m_proj;
 }
@@ -47,7 +42,7 @@ OrthographicCamera::~OrthographicCamera()
 
 void OrthographicCamera::update()
 {
-	m_proj = &Matrix<float>::projOrtho(
+	m_proj = Matrix<float>::projOrtho(
 		(DEM_UINT)m_position.x,
 		(DEM_UINT)(m_position.x + m_width),
 		(DEM_UINT)m_position.y,
@@ -112,12 +107,12 @@ PerspectiveCamera::~PerspectiveCamera()
 
 void PerspectiveCamera::updateView()
 {
-	m_view = &Matrix<float>::view(eye, target, up);
+	m_view = Matrix<float>::view(eye, target, up);
 }
 
 void PerspectiveCamera::updateProj()
 {
-	m_proj = &Matrix<float>::projPersp(m_fov, m_aspect, m_near, m_far);
+	m_proj = Matrix<float>::projPersp(m_fov, m_aspect, m_near, m_far);
 }
 
 void PerspectiveCamera::update()

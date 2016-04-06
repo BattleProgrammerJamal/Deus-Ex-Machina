@@ -17,13 +17,13 @@ namespace DEM
 
 				virtual void update();
 
-				Math::Matrix<float>* getView() const;
+				Math::Matrix<float> getView() const;
 
-				Math::Matrix<float>* getProj() const;
+				Math::Matrix<float> getProj() const;
 
 			protected:
-				Math::Matrix<float> *m_view;
-				Math::Matrix<float> *m_proj;
+				Math::Matrix<float> m_view;
+				Math::Matrix<float> m_proj;
 		};
 
 		class OrthographicCamera : public Camera

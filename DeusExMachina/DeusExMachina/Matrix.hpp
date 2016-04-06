@@ -16,6 +16,14 @@ namespace DEM
 		class Matrix
 		{
 			public:
+				Matrix()
+				{
+					m_l = 4;
+					m_c = 4;
+					m_data = new T[m_l * m_c];
+					identity();
+				}
+
 				Matrix(DEM_UINT L, DEM_UINT C)
 				{
 					m_l = L;
