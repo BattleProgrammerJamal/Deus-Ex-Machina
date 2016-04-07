@@ -2,6 +2,8 @@
 #define TRANSFORM_HPP
 
 #include <iostream>
+#include <string>
+
 #include "Component.hpp"
 #include "Math.hpp"
 

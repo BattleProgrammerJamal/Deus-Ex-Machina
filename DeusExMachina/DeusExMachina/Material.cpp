@@ -50,12 +50,18 @@ Material::~Material()
 void Material::bind()
 {
 	m_shaderProgram->bind();
+	DEM_UINT index = 0;
 	for (Texture *tex : m_textures)
 	{
 		if (tex->isLoaded())
 		{
 			tex->bind();
+			std::strstream stream;
+			stream << "u_texture" << index;
+			GLuint textureLocation = glGetUniformLocation(m_shaderProgram->getProgram(), stream.str());
+			glUniform1i(textureLocation, tex->getTexture());
 		}
+		++index;
 	}
 
 	for (ShaderUniform *uniform : uniforms)
@@ -124,4 +130,16 @@ Shader* Material::getShaderProgram() const
 void Material::setShaderProgram(Shader *shader)
 {
 	m_shaderProgram = shader;
+}
+
+Material& Material::loadTexture(const std::string path)
+{
+	static DEM_UINT index = 0;
+
+	std::vector<std::string> realpath;
+	realpath.emplace_back(path);
+	m_textures[index]->load(realpath);
+
+	index = (index + 1) % DEM_MAXIMUM_TEXTURES;
+	return *this;
 }

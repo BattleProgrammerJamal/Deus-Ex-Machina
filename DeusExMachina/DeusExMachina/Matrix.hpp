@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <strstream>
+
 #include "Vector3.hpp"
 #include "Quaternion.hpp"
 #include "Types.hpp"
@@ -241,19 +242,17 @@ namespace DEM
 
 					const float tanHalfFOV = tanf(rad<float>(fov / 2.0f));
 
-					T.setData(T.index(0, 0), 1.0f / (tanHalfFOV * aspect));
-					T.setData(T.index(1, 1), 1.0f / tanHalfFOV);
-					T.setData(T.index(2, 2), (-cnear - cfar) / (cnear - cfar));
-					T.setData(T.index(2, 3), (2.0f * cfar * cnear) / (cnear - cfar));
-
-					T.setData(T.index(3, 2), 1.0f);
+					T.setData(0, 1.0f / (tanHalfFOV * aspect));
+					T.setData(5, 1.0f / tanHalfFOV);
+					T.setData(10, (-cnear - cfar) / (cnear - cfar));
+					T.setData(14, 2.0f * cfar * cnear / (cnear - cfar));
 
 					return T;
 				}
 
 				static Matrix<float> view(Vector3& eye, Vector3& target, Vector3& up)
 				{
-					Matrix<float> T(4, 4);
+					Matrix<float> orientation(4, 4);
 
 					Vector3 zAxis = eye - target;
 					zAxis.normalize();
@@ -261,25 +260,21 @@ namespace DEM
 					xAxis.normalize();
 					Vector3 yAxis = zAxis.cross(xAxis);
 
-					T.setData(T.index(0, 0), xAxis.x);
-					T.setData(T.index(0, 1), yAxis.x);
-					T.setData(T.index(0, 2), zAxis.x);
+					orientation.setData(orientation.index(0, 0), xAxis.x);
+					orientation.setData(orientation.index(0, 1), yAxis.x);
+					orientation.setData(orientation.index(0, 2), zAxis.x);
 
-					T.setData(T.index(1, 0), xAxis.y);
-					T.setData(T.index(1, 1), yAxis.y);
-					T.setData(T.index(1, 2), zAxis.y);
+					orientation.setData(orientation.index(1, 0), xAxis.y);
+					orientation.setData(orientation.index(1, 1), yAxis.y);
+					orientation.setData(orientation.index(1, 2), zAxis.y);
 
-					T.setData(T.index(2, 0), xAxis.z);
-					T.setData(T.index(2, 1), yAxis.z);
-					T.setData(T.index(2, 2), zAxis.z);
+					orientation.setData(orientation.index(2, 0), xAxis.z);
+					orientation.setData(orientation.index(2, 1), yAxis.z);
+					orientation.setData(orientation.index(2, 2), zAxis.z);
 
-					T.setData(T.index(3, 0), -xAxis.dot(eye));
-					T.setData(T.index(3, 1), -yAxis.dot(eye));
-					T.setData(T.index(3, 2), -zAxis.dot(eye));
+					Matrix<float> translation = Matrix<float>::translation(-eye);
 
-					T.setData(T.index(3, 3), 1);
-
-					return T;
+					return orientation * translation;
 				}
 
 				T* ptr_value()

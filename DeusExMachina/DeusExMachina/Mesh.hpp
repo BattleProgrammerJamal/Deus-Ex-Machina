@@ -5,6 +5,10 @@
 #include <vector>
 #include <ctime>
 
+#include "glm.hpp"
+#include "gtx/transform.hpp"
+#include "gtc/type_ptr.hpp"
+
 #include <glew.h>
 #include <gl/GL.h>
 #include <SFML/Graphics.hpp>
@@ -35,6 +39,8 @@ namespace DEM
 				void setGeometry(Geometry* geometry);
 				Material* getMaterial() const;
 				void setMaterial(Material* material);
+
+				static System::Clock* getClock();
 				
 				void Render();
 

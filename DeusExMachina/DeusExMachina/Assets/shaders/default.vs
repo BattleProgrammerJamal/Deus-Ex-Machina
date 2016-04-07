@@ -10,6 +10,10 @@ out vec3 v_normal;
 out vec3 v_tangent;
 out vec2 v_uv;
 
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+
 void main(void)
 {
 	v_position = a_position;
@@ -17,5 +21,5 @@ void main(void)
 	v_tangent = a_tangent;
 	v_uv = a_uv;
 	
-	gl_Position = vec4(a_position, 1.0);
+	gl_Position = u_proj * u_view * u_world * vec4(a_position, 1.0);
 }

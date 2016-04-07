@@ -12,15 +12,15 @@ DeusExMachina::DeusExMachina(ProjectSettings *settings)
 
 	m_system = System::System::Instance();
 
+	CameraSettings camSettings = settings->cameraSettings;
+
 	if (settings->type == DEM_PROJECT_3D)
 	{
-		CameraPerspectiveSettings *camSettings = static_cast<CameraPerspectiveSettings*>(settings->cameraSettings);
-		m_renderer = new Renderer(new PerspectiveCamera(camSettings->fov, camSettings->aspect, camSettings->cnear, camSettings->cfar), new Scene("New Scene"));
+		m_renderer = new Renderer(new PerspectiveCamera(camSettings.fov, camSettings.aspect, camSettings.cnear, camSettings.cfar), new Scene("New Scene"));
 	}
 	else
 	{
-		CameraOrthographicSettings *camSettings = static_cast<CameraOrthographicSettings*>(settings->cameraSettings);
-		m_renderer = new Renderer(new OrthographicCamera(camSettings->position, camSettings->width, camSettings->height), new Scene("New Scene"));
+		m_renderer = new Renderer(new OrthographicCamera(camSettings.position, camSettings.width, camSettings.height), new Scene("New Scene"));
 	}
 
 	m_system->initUiAPI();

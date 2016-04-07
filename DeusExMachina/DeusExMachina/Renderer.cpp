@@ -35,6 +35,10 @@ Renderer& Renderer::loadScene(DEM_UINT index)
 	if (index >= 0 && index < m_scenes.size())
 	{
 		m_scene = m_scenes.at(index);
+		for (DEM_UINT i = 0; i < m_scene->size(); ++i)
+		{
+			StartComponents(m_scene->get(i));
+		}
 	}
 	return *this;
 }

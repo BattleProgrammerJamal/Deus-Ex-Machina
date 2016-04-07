@@ -12,8 +12,12 @@ namespace DEM
 		class Clock
 		{
 			public:
-				Clock()
+				Clock(bool _start = false)
 				{
+					if (_start)
+					{
+						start();
+					}
 				}
 
 				virtual ~Clock()

@@ -28,6 +28,7 @@
 #include "PointLight.hpp"
 #include "DirectionalLight.hpp"
 #include "Geometry.hpp"
+#include "SphereGeometry.hpp"
 #include "Transform.hpp"
 #include "Actor.hpp"
 #include "Mesh.hpp"
@@ -49,34 +50,19 @@ namespace DEM
 
 	struct CameraSettings
 	{
-		CameraSettings(){}
-	};
-
-	struct CameraOrthographicSettings : public CameraSettings
-	{
 		Math::Vector2 position;
 		float width;
 		float height;
-
-		CameraOrthographicSettings() 
-			: CameraSettings()
-		{
-			position.set(0.0f, 0.0f);
-			width = 1024.0f;
-			height = 768.0f;
-		}
-	};
-
-	struct CameraPerspectiveSettings : public CameraSettings
-	{
 		float fov;
 		float aspect;
 		float cnear;
 		float cfar;
 
-		CameraPerspectiveSettings()
-			: CameraSettings()
+		CameraSettings()
 		{
+			position.set(0.0f, 0.0f);
+			width = 1024.0f;
+			height = 768.0f;
 			fov = Math::rad<float>(45.0f);
 			aspect = 1024.0f / 768.0f;
 			cnear = 0.1f;
@@ -87,7 +73,7 @@ namespace DEM
 	struct ProjectSettings
 	{
 		ProjetRendererType type;
-		CameraSettings *cameraSettings;
+		CameraSettings cameraSettings;
 		std::string title;
 		DEM_UINT width;
 		DEM_UINT height;
@@ -96,17 +82,16 @@ namespace DEM
 		ProjectSettings()
 		{
 			type = DEM_PROJECT_3D;
-			cameraSettings = new CameraSettings;
 			title = "Deus Ex Machina";
 			fullscreen = false;
 			width = 1024;
 			height = 768;
+			cameraSettings.width = width;
+			cameraSettings.height = height;
 		}
 
 		~ProjectSettings()
 		{
-			delete cameraSettings;
-			cameraSettings = 0;
 		}
 	};
 
@@ -222,6 +207,15 @@ namespace DEM
 					OnDisplayContextInitialized(app);
 				}
 
+				DEM::Core::Renderer *renderer = app->getRenderer();
+				DEM::Core::Scene *scene = renderer->getScene();
+				DEM::Core::Camera *camera = renderer->getCamera();
+
+				for (DEM_UINT i = 0; i < scene->size(); ++i)
+				{
+					renderer->executeCmd(new DEM::Core::RCActorComponentsStart(i));
+				}
+
 				while (state())
 				{
 					if (window->pollEvent(evt))
@@ -231,8 +225,6 @@ namespace DEM
 							Pipeline::command(Core::KILL_ALL);
 						}
 					}
-
-					DEM::Core::Camera *camera = app->getRenderer()->getCamera();
 					
 					/*
 					glBindBuffer(GL_UNIFORM_BUFFER, ubo);

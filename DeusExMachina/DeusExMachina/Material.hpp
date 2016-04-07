@@ -2,7 +2,9 @@
 #define MATERIAL_HPP
 
 #include <iostream>
+#include <strstream>
 #include <array>
+#include <vector>
 
 #include "Asset.hpp"
 #include "Color.hpp"
@@ -175,6 +177,8 @@ namespace DEM
 
 				Shader* getShaderProgram() const;
 				void setShaderProgram(Shader *shader);
+
+				Material& loadTexture(const std::string path);
 
 			protected:
 				std::array<Texture*, DEM_MAXIMUM_TEXTURES>		m_textures;
