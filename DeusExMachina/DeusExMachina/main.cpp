@@ -8,29 +8,71 @@ using namespace DEM::Collections;
 using namespace DEM::Math;
 using namespace DEM::System;
 
-class Rotator : public Component
+class MTAnimator : public Component
 {
 	public:
-		Vector3 velocity;
-
-		Rotator(Vector3 _velocity)
+		MTAnimator()
 			: Component()
 		{
-			velocity = _velocity;
 		}
 
-		void Start()
-		{
-		}
+		void Start(){}
 
 		void Update()
 		{
 			float t = static_cast<Mesh*>(m_parent)->getClock()->seconds();
-
-			m_parent->transform->Translate(Vector3(velocity.x * 0.001f * cos(4.0f * t), 0.0f, velocity.z * 0.001f * sin(4.0f * t)));
-			m_parent->transform->setRotation(Quaternion(Vector3(1.0f, 0.0f, 1.0f), velocity.length() * sin(t)));
+			m_parent->transform->setRotation(Quaternion(Vector3(0.0f, 1.0f, 0.0f), 2.0f * sin(t)));
 		}
 };
+
+class KeyboardHandler : public KeyboardEvent
+{
+	void operator()(sf::Keyboard::Key key)
+	{
+		DeusExMachina *app = DeusExMachina::Instance();
+		Renderer *renderer = app->getRenderer();
+		Scene *scene = renderer->getScene();
+
+		if (key == sf::Keyboard::Left)
+		{
+			Actor *m_parent = scene->get("Test");
+			if (typeid(*m_parent) == typeid(Mesh))
+			{
+				Mesh *parentMesh = static_cast<Mesh*>(m_parent);
+				if (typeid(*parentMesh->getGeometry()) == typeid(MorphTargetGeometry))
+				{
+					MorphTargetGeometry *mtGeometry = static_cast<MorphTargetGeometry*>(parentMesh->getGeometry());
+					vector<MorphTarget*> morphTargets = mtGeometry->getMorphTargets();
+
+					morphTargets.at(0)->weight -= 0.05f;
+					if (morphTargets.at(0)->weight < 0.0f) { morphTargets.at(0)->weight = 0.0f; }
+				}
+			}
+		}
+
+		if (key == sf::Keyboard::Right)
+		{
+			Actor *m_parent = scene->get("Test");
+			if (typeid(*m_parent) == typeid(Mesh))
+			{
+				Mesh *parentMesh = static_cast<Mesh*>(m_parent);
+				if (typeid(*parentMesh->getGeometry()) == typeid(MorphTargetGeometry))
+				{
+					MorphTargetGeometry *mtGeometry = static_cast<MorphTargetGeometry*>(parentMesh->getGeometry());
+					vector<MorphTarget*> morphTargets = mtGeometry->getMorphTargets();
+
+					morphTargets.at(0)->weight += 0.05f;
+					if (morphTargets.at(0)->weight > 1.0f) { morphTargets.at(0)->weight = 1.0f; }
+				}
+			}
+		}
+	}
+};
+
+void TW_CALL AngerPoseChoice(void *data)
+{
+
+}
 
 int main(int argc, char** argv)
 {
@@ -42,27 +84,45 @@ int main(int argc, char** argv)
 		Scene *scene = renderer->getScene();
 		PerspectiveCamera *camera = static_cast<PerspectiveCamera*>(renderer->getCamera());
 
-		camera->eye.z = 10.0f;
+		app->addKeyboardEventListener(new KeyboardHandler());
 
-		Geometry *geo = new SphereGeometry(3.0f, 32, 32);
+		camera->target.y = 5.0f;
+		camera->eye.y = 4.0f;
+		camera->eye.z = 8.0f;
+
+		DirectionalLight *dLight = new DirectionalLight(Vector3(), Vector3(0.0f, 0.0f, 1.0f));
+		dLight->color.set(1.0f, 1.0f, 0.0f, 1.0f);
+		dLight->intensity = 0.5f;
+		scene->add(dLight);
+
+		Model *neutralPoseModel = new Model("Assets/models/neutral.obj");
+		Model *angerPoseModel = new Model("Assets/models/anger.obj");
+		Model *sadPoseModel = new Model("Assets/models/sad.obj");
+		Model *surprisedPoseModel = new Model("Assets/models/surprised.obj");
+		Mesh *neutralPose = neutralPoseModel->Instanciate(2);
+		Mesh *angerPose = angerPoseModel->Instanciate(2);
+		Mesh *sadPose = sadPoseModel->Instanciate(2);
+		Mesh *surprisedPose = surprisedPoseModel->Instanciate(2);
+
+		std::vector<MorphTarget*> morphTargets;
+		morphTargets.push_back(new MorphTarget(surprisedPose->getGeometry(), 0.5f));
+		morphTargets.push_back(new MorphTarget(sadPose->getGeometry(), 0.5f));
+		morphTargets.push_back(new MorphTarget(angerPose->getGeometry(), 0.33f));
+		MorphTargetGeometry *geo = new MorphTargetGeometry(neutralPose->getGeometry(), morphTargets);
+
 		Material *mat = new LambertMaterial(Color(1.0f, 0.0f, 0.0f, 1.0f), Color(0.0f, 1.0f, 0.0f, 1.0f));
+		Shader *shdr = new Shader("Assets/shaders/morphtarget.vs", "Assets/shaders/morphtarget.fs");
+		shdr->load();
+		mat->setShaderProgram(shdr);
 		mat->loadTexture("Assets/textures/lava2.jpg");
-		mat->baseColor.set(0.0f, 1.0f, 0.0f, 1.0f);
 		Mesh *m = new Mesh(geo, mat, "Test");
-		m->drawStyle = GL_TRIANGLE_STRIP;
-		m->addComponent(new Rotator(Vector3(0.1f, 0.5f, 2.0f)));
-		m->transform->setScale(Vector3(0.2f, 0.2f, 0.2f));
+		m->setChildren(neutralPose->getChildren());
+		m->drawStyle = GL_TRIANGLES;
+		m->addComponent(new MTAnimator());
 		scene->add(m);
 
-		for (DEM_UINT i = 0; i < 100; ++i)
-		{
-			Mesh *m2 = new Mesh(*m);
-			m2->transform->setScale(Vector3(0.3f, 0.3f, 0.3f));
-			m2->addComponent(new Rotator(Vector3(4 * cos(static_cast<float>(rand() % 10)), 
-				3 * -sin(static_cast<float>(rand() % 10)), 
-				2 * cos(static_cast<float>(rand() % 10)))));
-			scene->add(m2);
-		}
+		TwBar *bar = TwNewBar("User Interface");
+		TwAddButton(bar, "Anger Pose", AngerPoseChoice, 0, "");
 	});
 
 	DeusExMachina::Destroy();

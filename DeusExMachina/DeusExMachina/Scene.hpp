@@ -7,6 +7,8 @@
 
 #include "Actor.hpp"
 
+#define DEM_SCENE_POOL_RESERVE 100
+
 namespace DEM
 {
 	namespace Core
@@ -35,6 +37,8 @@ namespace DEM
 				std::vector<Actor*> getChildren() const;
 
 			private:
+				void _dynamicReserve();
+
 				static DEM_UINT			sm_id;
 				DEM_UINT				m_id;
 				std::string				m_name;

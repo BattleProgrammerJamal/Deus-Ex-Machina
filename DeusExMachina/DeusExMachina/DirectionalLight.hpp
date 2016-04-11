@@ -3,14 +3,21 @@
 
 #include <iostream>
 
+#include "Math.hpp"
+
+#include "Light.hpp"
+
 namespace DEM
 {
 	namespace Core
 	{
-		class DirectionalLight
+		class DirectionalLight : public Light
 		{
 			public:
-				DirectionalLight();
+				Math::Vector3 position;
+				Math::Vector3 direction;
+
+				DirectionalLight(const Math::Vector3& position = Math::Vector3(), const Math::Vector3& direction = Math::Vector3());
 				virtual ~DirectionalLight();
 
 			protected:

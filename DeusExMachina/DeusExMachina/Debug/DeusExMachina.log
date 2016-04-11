@@ -1,10 +1,10 @@
-﻿Build started 07/04/2016 14:44:57.
-     1>Project "C:\Users\wnivore\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\DeusExMachina\DeusExMachina.vcxproj" on node 2 (Build target(s)).
+﻿Build started 11/04/2016 20:38:30.
+     1>Project "C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\DeusExMachina\DeusExMachina.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ILibs\glm\include /ILibs\TinyObjLoader\TINY /ILibs\stbimage\include /ILibs\SFML\include /ILibs\glew\include /ILibs\AntTweakBar\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\wnivore\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.exe" /INCREMENTAL /NOLOGO /LIBPATH:Libs\SFML\lib /LIBPATH:Libs\glew\lib /LIBPATH:Libs\AntTweakBar\lib opengl32.lib glew32.lib "sfml-graphics.lib" "sfml-window.lib" "sfml-system.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\wnivore\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\wnivore\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.lib" /MACHINE:X86 Debug\Asset.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.exe" /INCREMENTAL /NOLOGO /LIBPATH:Libs\SFML\lib /LIBPATH:Libs\glew\lib /LIBPATH:Libs\AntTweakBar\lib opengl32.lib glew32.lib "sfml-graphics.lib" "sfml-window.lib" "sfml-system.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.lib" /MACHINE:X86 Debug\Asset.obj
          Debug\Color.obj
          Debug\DirectionalLight.obj
          Debug\File.obj
@@ -14,6 +14,8 @@
          Debug\Light.obj
          Debug\Material.obj
          Debug\Mesh.obj
+         Debug\Model.obj
+         Debug\MorphTargetGeometry.obj
          Debug\PhongMaterial.obj
          Debug\PointLight.obj
          Debug\Profiler.obj
@@ -37,14 +39,15 @@
          Debug\SphereGeometry.obj
          Debug\System.obj
          Debug\Texture.obj
+         Debug\tiny_obj_loader.obj
          Debug\Transform.obj
          Debug\Types.obj
          Debug\Vector2.obj
          Debug\Vector3.obj
          Debug\Vector4.obj
-         DeusExMachina.vcxproj -> C:\Users\wnivore\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.exe
-     1>Done Building Project "C:\Users\wnivore\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\DeusExMachina\DeusExMachina.vcxproj" (Build target(s)).
+         DeusExMachina.vcxproj -> C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\Debug\DeusExMachina.exe
+     1>Done Building Project "C:\Users\Jamal\Documents\GitHub\Deus-Ex-Machina\DeusExMachina\DeusExMachina\DeusExMachina.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:03.09
+Time Elapsed 00:00:02.40

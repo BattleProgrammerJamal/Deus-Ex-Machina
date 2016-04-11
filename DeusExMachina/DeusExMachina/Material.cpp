@@ -50,6 +50,9 @@ Material::~Material()
 void Material::bind()
 {
 	m_shaderProgram->bind();
+
+	GLuint programID = m_shaderProgram->getProgram();
+
 	DEM_UINT index = 0;
 	for (Texture *tex : m_textures)
 	{
@@ -58,7 +61,7 @@ void Material::bind()
 			tex->bind();
 			std::strstream stream;
 			stream << "u_texture" << index;
-			GLuint textureLocation = glGetUniformLocation(m_shaderProgram->getProgram(), stream.str());
+			GLuint textureLocation = glGetUniformLocation(programID, stream.str());
 			glUniform1i(textureLocation, tex->getTexture());
 		}
 		++index;
@@ -66,7 +69,7 @@ void Material::bind()
 
 	for (ShaderUniform *uniform : uniforms)
 	{
-		GLuint uniformLocation = glGetUniformLocation(m_shaderProgram->getProgram(), uniform->name.c_str());
+		GLuint uniformLocation = glGetUniformLocation(programID, uniform->name.c_str());
 		if (typeid(*uniform->value) == typeid(ShaderUInt))
 		{
 			ShaderUInt *value = static_cast<ShaderUInt*>(uniform->value);

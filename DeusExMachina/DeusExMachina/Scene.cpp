@@ -9,6 +9,8 @@ Scene::Scene(std::string name)
 	m_id = sm_id;
 	sm_id++;
 	m_name = name;
+	m_children.reserve(DEM_SCENE_POOL_RESERVE);
+
 }
 
 Scene::Scene(const Scene& scene)
@@ -17,6 +19,7 @@ Scene::Scene(const Scene& scene)
 	sm_id++;
 	m_name = scene.m_name;
 	m_children = scene.m_children;
+	m_children.reserve(DEM_SCENE_POOL_RESERVE);
 }
 
 Scene::~Scene()
@@ -35,6 +38,7 @@ DEM_UINT Scene::size() const
 
 Scene& Scene::add(Actor *actor)
 {
+	_dynamicReserve();
 	m_children.emplace_back(actor);
 	return *this;
 }
@@ -55,9 +59,13 @@ Actor* Scene::get(DEM_UINT id)
 {
 	for (DEM_UINT i = 0; i < m_children.size(); ++i)
 	{
-		if (m_children.at(i)->getId() == id)
+		Actor *actor = m_children.at(i);
+		if (actor)
 		{
-			return m_children.at(i);
+			if (i == id)
+			{
+				return m_children.at(i);
+			}
 		}
 	}
 	return 0;
@@ -129,4 +137,12 @@ void Scene::setName(const std::string& name)
 std::vector<Actor*> Scene::getChildren() const
 {
 	return m_children;
+}
+
+void Scene::_dynamicReserve()
+{
+	if (m_children.size() == (m_children.capacity() - 1))
+	{
+		m_children.reserve(DEM_SCENE_POOL_RESERVE);
+	}
 }

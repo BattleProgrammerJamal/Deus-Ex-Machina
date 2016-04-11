@@ -71,6 +71,73 @@ void Mesh::Render()
 	GLuint eyeLocation = glGetUniformLocation(programID, "u_eye");
 	glUniform3f(eyeLocation, eye.x, eye.y, eye.z);
 
+	DEM_UINT index = 0;
+	for (Light *L : Light::getLights())
+	{
+		std::stringstream lightColorStream, lightIntensityStream;
+		lightColorStream << "u_lights[" << index << "].color";
+		lightIntensityStream << "u_lights[" << index << "].intensity";
+
+		GLuint lightColorLocation = glGetUniformLocation(programID, lightColorStream.str().c_str());
+		GLuint lightIntensityLocation = glGetUniformLocation(programID, lightIntensityStream.str().c_str());
+
+		glUniform4f(lightColorLocation, L->color.r, L->color.g, L->color.b, L->color.a);
+		glUniform1f(lightIntensityLocation, L->intensity);
+
+		if (typeid(*L) == typeid(DirectionalLight))
+		{
+			DirectionalLight *dLight = static_cast<DirectionalLight*>(L);
+
+			std::stringstream lightPositionStream, lightDirectionStream, lightTypeStream;
+			lightPositionStream << "u_lights[" << index << "].position";
+			lightDirectionStream << "u_lights[" << index << "].direction";
+			lightTypeStream << "u_lights[" << index << "].type";
+
+			GLuint lightPositionLocation = glGetUniformLocation(programID, lightPositionStream.str().c_str());
+			GLuint lightDirectionLocation = glGetUniformLocation(programID, lightDirectionStream.str().c_str());
+			GLuint lightTypeLocation = glGetUniformLocation(programID, lightTypeStream.str().c_str());
+
+			glUniform3f(lightPositionLocation, dLight->position.x, dLight->position.y, dLight->position.z);
+			glUniform3f(lightDirectionLocation, dLight->direction.x, dLight->direction.y, dLight->direction.z);
+			glUniform1i(lightTypeLocation, 1);
+		}
+		else
+		{
+			if (typeid(*L) == typeid(PointLight))
+			{
+				PointLight *pLight = static_cast<PointLight*>(L);
+
+				std::stringstream lightPositionStream, lightTypeStream;
+				lightPositionStream << "u_lights[" << index << "].position";
+				lightTypeStream << "u_lights[" << index << "].type";
+
+				GLuint lightPositionLocation = glGetUniformLocation(programID, lightPositionStream.str().c_str());
+				GLuint lightTypeLocation = glGetUniformLocation(programID, lightTypeStream.str().c_str());
+
+				glUniform3f(lightPositionLocation, pLight->position.x, pLight->position.y, pLight->position.z);
+				glUniform1i(lightTypeLocation, 0);
+			}
+		}
+
+		++index;
+	}
+
+	if (typeid(*m_geometry) == typeid(MorphTargetGeometry))
+	{
+		DEM_UINT morph_target_index = 0;
+		MorphTargetGeometry *mtGeometry = static_cast<MorphTargetGeometry*>(m_geometry);
+		for (MorphTarget *mt : mtGeometry->getMorphTargets())
+		{
+			std::strstream stream;
+			stream << "u_morphTargetWeight" << morph_target_index << '\0';
+
+			GLuint morphTargetWeightLocation = glGetUniformLocation(programID, stream.str());
+			glUniform1f(morphTargetWeightLocation, mt->weight);
+
+			++morph_target_index;
+		}
+	}
+
 	m_geometry->bind();
 	glDrawElements(drawStyle, m_geometry->getIndices().size(), GL_UNSIGNED_INT, (const void*)0);
 	m_geometry->unbind();

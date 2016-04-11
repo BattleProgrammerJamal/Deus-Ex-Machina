@@ -8,6 +8,8 @@
 #include <thread>
 #include <atomic>
 
+#include "AntTweakBar/AntTweakBar.h"
+
 #include "Crypto.hpp"
 #include "Collections.hpp"
 #include "Clock.hpp"

@@ -3,14 +3,20 @@
 
 #include <iostream>
 
+#include "Math.hpp"
+
+#include "Light.hpp"
+
 namespace DEM
 {
 	namespace Core
 	{
-		class PointLight
+		class PointLight : public Light
 		{
 			public:
-				PointLight();
+				Math::Vector3 position;
+
+				PointLight(const Math::Vector3& position = Math::Vector3());
 				virtual ~PointLight();
 
 			protected:

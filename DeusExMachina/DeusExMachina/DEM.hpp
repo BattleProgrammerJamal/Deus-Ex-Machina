@@ -4,6 +4,7 @@
 #define DEM_DEBUG 0
 
 #include <iostream>
+#include <vector>
 #include <cstdio>
 #include <cstdlib>
 
@@ -18,6 +19,7 @@
 #include "Pipeline.hpp"
 #include "Component.hpp"
 #include "Resource.hpp"
+#include "Model.hpp"
 #include "Image.hpp"
 #include "Asset.hpp"
 #include "Texture.hpp"
@@ -29,6 +31,7 @@
 #include "DirectionalLight.hpp"
 #include "Geometry.hpp"
 #include "SphereGeometry.hpp"
+#include "MorphTargetGeometry.hpp"
 #include "Transform.hpp"
 #include "Actor.hpp"
 #include "Mesh.hpp"
@@ -100,6 +103,12 @@ namespace DEM
 	class UpdateActorComponentsPipeline;
 	class SFMLWindowHandlerPipeline;
 
+	class KeyboardEvent
+	{
+		public:
+			virtual void operator()(sf::Keyboard::Key key) = 0;
+	};
+
 	class DeusExMachina
 	{
 		public:
@@ -128,10 +137,21 @@ namespace DEM
 				m_ubo = ubo;
 			}
 
+			void addKeyboardEventListener(KeyboardEvent *kbEvent)
+			{
+				m_keyboardListeners.emplace_back(kbEvent);
+			}
+
+			std::vector<KeyboardEvent*> getKeyboardListeners() const
+			{
+				return m_keyboardListeners;
+			}
+
 		private:
 			DeusExMachina(ProjectSettings *settings);
 
 			static DeusExMachina*			sm_instance;
+			std::vector<KeyboardEvent*>		m_keyboardListeners;
 			ProjectSettings*				m_settings;
 			System::System*					m_system;
 			Core::Renderer*					m_renderer;
@@ -220,9 +240,27 @@ namespace DEM
 				{
 					if (window->pollEvent(evt))
 					{
+						TwEventSFML(&evt, SFML_VERSION_MAJOR, SFML_VERSION_MINOR);
+
 						if (evt.type == sf::Event::Closed || (evt.type == sf::Event::KeyPressed && evt.key.code == sf::Keyboard::Escape))
 						{
 							Pipeline::command(Core::KILL_ALL);
+						}
+
+						if (evt.type == sf::Event::Resized)
+						{
+							sf::Vector2u windowSize = window->getSize();
+							parameters->width = windowSize.x;
+							parameters->height = windowSize.y;
+							glViewport(0, 0, parameters->width, parameters->height);
+						}
+
+						if (evt.type == sf::Event::KeyPressed)
+						{
+							for (KeyboardEvent *kbEvent : app->getKeyboardListeners())
+							{
+								(*kbEvent)(evt.key.code);
+							}
 						}
 					}
 					
@@ -241,6 +279,10 @@ namespace DEM
 					{
 						app->getRenderer()->executeCmd(new Core::RCActorRender(i));
 					}
+
+					sf::Vector2u size = window->getSize();
+					TwWindowSize(size.x, size.y);
+					TwDraw();
 
 					window->display();
 				}

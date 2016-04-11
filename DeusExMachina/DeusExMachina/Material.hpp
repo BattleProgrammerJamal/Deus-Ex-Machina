@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <strstream>
+#include <sstream>
 #include <array>
 #include <vector>
 
@@ -11,6 +12,10 @@
 #include "Texture.hpp"
 #include "Shader.hpp"
 #include "Math.hpp"
+
+#include "Light.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
 
 #define DEM_MAXIMUM_TEXTURES 16
 
