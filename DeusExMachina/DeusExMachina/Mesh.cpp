@@ -15,7 +15,9 @@ Mesh::Mesh(Geometry *geometry, Material *material, string name)
 	++sm_id;
 	m_geometry = geometry;
 	m_material = material;
-	drawStyle = GL_TRIANGLES;
+	drawStyles.push_back(GL_TRIANGLES);
+	wireframe = false;
+	wireframeStyle.set(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 Mesh::Mesh(const Mesh& mesh)
@@ -24,7 +26,9 @@ Mesh::Mesh(const Mesh& mesh)
 	++sm_id;
 	m_geometry = new Geometry(*mesh.getGeometry());
 	m_material = new Material(*mesh.getMaterial());
-	drawStyle = mesh.drawStyle;
+	drawStyles = mesh.drawStyles;
+	wireframe = mesh.wireframe;
+	wireframeStyle = mesh.wireframeStyle;
 }
 
 Mesh::~Mesh()
@@ -44,11 +48,11 @@ void Mesh::Render()
 	m_material->bind();
 	GLuint programID = m_material->getShaderProgram()->getProgram();
 
-	glm::mat4 T = glm::translate(glm::vec3(transform->getPosition().x, transform->getPosition().y, transform->getPosition().z));
-	glm::mat4 R =	glm::rotate(transform->getRotation().z, glm::vec3(0.0f, 0.0f, 1.0f)) * 
-					glm::rotate(transform->getRotation().x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
-					glm::rotate(transform->getRotation().y, glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 S = glm::scale(glm::vec3(transform->getScale().x, transform->getScale().y, transform->getScale().z));
+	glm::mat4 T = glm::translate(glm::vec3(transform->position.x, transform->position.y, transform->position.z));
+	glm::mat4 R =	glm::rotate(transform->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) * 
+					glm::rotate(transform->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f)) * 
+					glm::rotate(transform->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 S = glm::scale(glm::vec3(transform->scale.x, transform->scale.y, transform->scale.z));
 	glm::mat4 world = S * R * T;
 	glm::mat4 view = glm::lookAtRH(glm::vec3(camera->eye.x, camera->eye.y, camera->eye.z), 
 								glm::vec3(camera->target.x, camera->target.y, camera->target.z),
@@ -107,15 +111,24 @@ void Mesh::Render()
 			{
 				PointLight *pLight = static_cast<PointLight*>(L);
 
-				std::stringstream lightPositionStream, lightTypeStream;
+				std::stringstream lightPositionStream, lightTypeStream, lightAttenConstant, lightAttenLinear, lightAttenQuadric;
 				lightPositionStream << "u_lights[" << index << "].position";
 				lightTypeStream << "u_lights[" << index << "].type";
+				lightAttenConstant << "u_lights[" << index << "].attenuation_constant";
+				lightAttenLinear << "u_lights[" << index << "].attenuation_linear";
+				lightAttenQuadric << "u_lights[" << index << "].attenuation_quadric";
 
 				GLuint lightPositionLocation = glGetUniformLocation(programID, lightPositionStream.str().c_str());
 				GLuint lightTypeLocation = glGetUniformLocation(programID, lightTypeStream.str().c_str());
+				GLuint lightAttenConstantLocation = glGetUniformLocation(programID, lightAttenConstant.str().c_str());
+				GLuint lightAttenLinearLocation = glGetUniformLocation(programID, lightAttenLinear.str().c_str());
+				GLuint lightAttenQuadricLocation = glGetUniformLocation(programID, lightAttenQuadric.str().c_str());
 
 				glUniform3f(lightPositionLocation, pLight->position.x, pLight->position.y, pLight->position.z);
 				glUniform1i(lightTypeLocation, 0);
+				glUniform1f(lightAttenConstantLocation, pLight->attenuation.constant);
+				glUniform1f(lightAttenLinearLocation, pLight->attenuation.linear);
+				glUniform1f(lightAttenQuadricLocation, pLight->attenuation.quadric);
 			}
 		}
 
@@ -138,8 +151,27 @@ void Mesh::Render()
 		}
 	}
 
+	Texture *skyboxTexture = (*renderer->getSkyboxMaterial())[0];
+	GLuint skyboxLocation = glGetUniformLocation(programID, "u_skybox");
+	glActiveTexture(GL_TEXTURE0 + DEM_SKYBOX_TEXTURE_UNIT);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture->getTexture());
+
 	m_geometry->bind();
-	glDrawElements(drawStyle, m_geometry->getIndices().size(), GL_UNSIGNED_INT, (const void*)0);
+	GLuint wireframeModeLocation = glGetUniformLocation(programID, "u_wireframe");
+	for (GLuint drawStyle : drawStyles)
+	{
+		glUniform1i(wireframeModeLocation, 0);
+		glDrawElements(drawStyle, m_geometry->getIndices().size(), GL_UNSIGNED_INT, (const void*)0);
+	}
+	if (wireframe)
+	{
+		GLuint wireframeStyleLocation = glGetUniformLocation(programID, "u_wireframeStyle");
+
+		glUniform1i(wireframeModeLocation, 1);
+		glUniform4f(wireframeStyleLocation, wireframeStyle.r, wireframeStyle.g, wireframeStyle.b, wireframeStyle.a);
+
+		glDrawElements(GL_LINE_STRIP, m_geometry->getIndices().size(), GL_UNSIGNED_INT, (const void*)0);
+	}
 	m_geometry->unbind();
 
 	m_material->unbind();

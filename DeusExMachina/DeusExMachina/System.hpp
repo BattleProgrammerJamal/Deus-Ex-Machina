@@ -8,8 +8,6 @@
 #include <thread>
 #include <atomic>
 
-#include "AntTweakBar/AntTweakBar.h"
-
 #include "Crypto.hpp"
 #include "Collections.hpp"
 #include "Clock.hpp"
@@ -29,9 +27,6 @@ namespace DEM
 			public:
 				static System* Instance();
 				static void Destroy();
-
-				virtual void initAudioAPI();
-				virtual void initUiAPI();
 
 			private:
 				System();

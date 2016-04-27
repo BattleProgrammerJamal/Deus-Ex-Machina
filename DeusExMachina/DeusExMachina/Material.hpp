@@ -7,6 +7,10 @@
 #include <array>
 #include <vector>
 
+#include "glm.hpp"
+#include "gtx/transform.hpp"
+#include "gtc/type_ptr.hpp"
+
 #include "Asset.hpp"
 #include "Color.hpp"
 #include "Texture.hpp"
@@ -124,27 +128,71 @@ namespace DEM
 			private:
 				Math::Vector3* _data;
 		};
-		struct ShaderUMat : public ShaderUValue 
+		struct ShaderUQuaternion : public ShaderUValue 
 		{
 			public:
-				ShaderUMat(Math::Matrix<float> *data)
+				ShaderUQuaternion(Math::Quaternion *data)
 					: ShaderUValue()
 				{
-					data = _data;
+					_data = data;
 				}
 
-				Math::Matrix<float> get()
+				Math::Quaternion get()
 				{
-					return *((Math::Matrix<float>*)_data);
+					return *((Math::Quaternion*)_data);
 				}
 
-				void set(Math::Matrix<float> *data)
+				void set(Math::Quaternion *data)
 				{
 					_data = data;
 				}
 
 			private:
-				Math::Matrix<float>* _data;
+				Math::Quaternion* _data;
+		};
+		struct ShaderUMat3 : public ShaderUValue 
+		{
+			public:
+				ShaderUMat3(glm::mat3& data)
+					: ShaderUValue()
+				{
+					_data = data;
+				}
+
+				glm::mat3 get()
+				{
+					return _data;
+				}
+
+				void set(glm::mat3& data)
+				{
+					_data = data;
+				}
+
+			private:
+				glm::mat3		_data;
+		};
+		struct ShaderUMat4 : public ShaderUValue 
+		{
+			public:
+				ShaderUMat4(glm::mat4& data)
+					: ShaderUValue()
+				{
+					_data = data;
+				}
+
+				glm::mat4 get()
+				{
+					return _data;
+				}
+
+				void set(glm::mat4& data)
+				{
+					_data = data;
+				}
+
+			private:
+				glm::mat4		_data;
 		};
 
 		struct ShaderUniform
@@ -184,6 +232,8 @@ namespace DEM
 				void setShaderProgram(Shader *shader);
 
 				Material& loadTexture(const std::string path);
+
+				Texture* operator[](DEM_UINT index);
 
 			protected:
 				std::array<Texture*, DEM_MAXIMUM_TEXTURES>		m_textures;

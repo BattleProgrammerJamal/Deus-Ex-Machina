@@ -35,8 +35,8 @@ namespace DEM
 
 				Matrix(const Matrix<T>& m)
 				{
-					m_l = m.m_l;
-					m_c = m.m_c;
+					m_l = m.getL();
+					m_c = m.getC();
 					m_data = new T[m_l * m_c];
 
 					for (DEM_UINT i = 0; i < m_l * m_c; ++i)
@@ -282,7 +282,11 @@ namespace DEM
 					return m_data;
 				}
 
-			private:
+				DEM_UINT getL() const { return m_l; }
+
+				DEM_UINT getC() const { return m_c; }
+
+			protected:
 				DEM_UINT m_l;
 				DEM_UINT m_c;
 				T* m_data;

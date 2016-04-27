@@ -16,6 +16,7 @@
 #include <STB/stb_image.h>
 
 #include "Math.hpp"
+#include "Color.hpp"
 #include "Geometry.hpp"
 #include "Material.hpp"
 #include "Actor.hpp"
@@ -29,7 +30,9 @@ namespace DEM
 		class Mesh : public Actor
 		{
 			public:
-				GLuint drawStyle;
+				std::vector<GLuint> drawStyles;
+				bool wireframe;
+				DEM::Math::Color wireframeStyle;
 
 				Mesh(Geometry *geometry, Material *material, std::string name = "Actor");
 				Mesh(const Mesh& mesh);

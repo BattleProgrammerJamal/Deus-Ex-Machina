@@ -44,12 +44,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>Libs\glm\include;Libs\TinyObjLoader\TINY;Libs\stbimage\include;Libs\SFML\include;Libs\glew\include;Libs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Libs\FMOD\include;Libs\glm\include;Libs\TinyObjLoader\TINY;Libs\stbimage\include;Libs\SFML\include;Libs\glew\include;Libs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Libs\SFML\lib;Libs\glew\lib;Libs\AntTweakBar\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Libs\FMOD\lib;Libs\SFML\lib;Libs\glew\lib;Libs\AntTweakBar\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -59,21 +59,26 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>Libs\glm\include;Libs\TinyObjLoader\TINY;Libs\stbimage\include;Libs\SFML\include;Libs\glew\include;Libs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Libs\FMOD\include;Libs\glm\include;Libs\TinyObjLoader\TINY;Libs\stbimage\include;Libs\SFML\include;Libs\glew\include;Libs\AntTweakBar\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>Libs\SFML\lib;Libs\glew\lib;Libs\AntTweakBar\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Libs\FMOD\lib;Libs\SFML\lib;Libs\glew\lib;Libs\AntTweakBar\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AI.cpp" />
     <ClCompile Include="Asset.cpp" />
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="ConvolutionMaterial.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="File.cpp" />
+    <ClCompile Include="FileCSV.cpp" />
+    <ClCompile Include="FileINI.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="LambertMaterial.cpp" />
@@ -82,7 +87,9 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="MorphTargetGeometry.cpp" />
+    <ClCompile Include="Music.cpp" />
     <ClCompile Include="PhongMaterial.cpp" />
+    <ClCompile Include="PlaneGeometry.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -102,6 +109,7 @@
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SphereGeometry.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -113,10 +121,15 @@
     <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI.hpp" />
     <ClInclude Include="Asset.hpp" />
+    <ClInclude Include="Audio.hpp" />
     <ClInclude Include="Color.hpp" />
+    <ClInclude Include="ConvolutionMaterial.hpp" />
     <ClInclude Include="DirectionalLight.hpp" />
     <ClInclude Include="File.hpp" />
+    <ClInclude Include="FileCSV.hpp" />
+    <ClInclude Include="FileINI.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="Image.hpp" />
     <ClInclude Include="LambertMaterial.hpp" />
@@ -125,7 +138,9 @@
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Model.hpp" />
     <ClInclude Include="MorphTargetGeometry.hpp" />
+    <ClInclude Include="Music.hpp" />
     <ClInclude Include="PhongMaterial.hpp" />
+    <ClInclude Include="PlaneGeometry.hpp" />
     <ClInclude Include="PointLight.hpp" />
     <ClInclude Include="Profiler.hpp" />
     <ClInclude Include="Camera.hpp" />
@@ -145,6 +160,7 @@
     <ClInclude Include="Resource.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="Sound.hpp" />
     <ClInclude Include="SphereGeometry.hpp" />
     <ClInclude Include="System.hpp" />
     <ClInclude Include="Texture.hpp" />

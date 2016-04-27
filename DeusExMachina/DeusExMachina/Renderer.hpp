@@ -12,12 +12,23 @@
 #include "Scene.hpp"
 #include "Camera.hpp"
 
+#include "Transform.hpp"
+
+#include "Geometry.hpp"
+#include "Material.hpp"
+
 #define DEM_RENDER_DEBUG 0
+
+#define DEM_SKYBOX_TEXTURE_UNIT 15
+
+#define DEFAULT_SKYBOX_VS "Assets/shaders/skybox.vs"
+#define DEFAULT_SKYBOX_FS "Assets/shaders/skybox.fs"
 
 namespace DEM
 {
 	namespace Core
 	{
+		class Mesh;
 		struct RenderCommand;
 
 		class Renderer
@@ -43,10 +54,24 @@ namespace DEM
 
 				Scene* getScene();
 				void setScene(Scene* scene);
+
+				bool isSkyboxEnabled() const;
+				void enableSkybox();
+				void disableSkybox();
+
+				void initSkybox();
+				void loadSkybox(const std::string& right, const std::string& left, const std::string& up, const std::string& down, const std::string& forward, const std::string& back);
+
+				void renderSkybox();
+
+				Material* getSkyboxMaterial() const;
 				
 			private:
 				Camera*					m_camera;
 				Scene*					m_scene;
+				Geometry*				m_skyboxGeometry;
+				Material*				m_skyboxMaterial;
+				bool					m_enableSkybox;
 				DEM_UINT				m_currentSceneIndex;
 				std::vector<Scene*>		m_scenes;
 		};

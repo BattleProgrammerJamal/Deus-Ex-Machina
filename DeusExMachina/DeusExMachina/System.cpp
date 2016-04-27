@@ -31,13 +31,3 @@ System::System()
 System::~System()
 {
 }
-
-void System::initAudioAPI()
-{
-
-}
-
-void System::initUiAPI()
-{
-	TwInit(TW_OPENGL, (void*)0);
-}

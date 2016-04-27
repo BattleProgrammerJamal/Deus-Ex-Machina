@@ -21,7 +21,7 @@ namespace DEM
 				File(std::string path);
 				virtual ~File();
 
-				Resource& load();
+				virtual Resource& load();
 
 				std::string getPath() const;
 
@@ -33,7 +33,7 @@ namespace DEM
 
 				File& write(const std::string& buff);
 
-			private:
+			protected:
 				std::string		m_path;
 				std::ofstream	m_writter;
 				std::ifstream	m_reader;

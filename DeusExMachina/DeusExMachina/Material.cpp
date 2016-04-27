@@ -60,9 +60,9 @@ void Material::bind()
 		{
 			tex->bind();
 			std::strstream stream;
-			stream << "u_texture" << index;
+			stream << "u_texture" << index << '\0';
 			GLuint textureLocation = glGetUniformLocation(programID, stream.str());
-			glUniform1i(textureLocation, tex->getTexture());
+			glUniform1i(textureLocation, tex->getUnit());
 		}
 		++index;
 	}
@@ -90,17 +90,20 @@ void Material::bind()
 			Math::Vector3 value = (static_cast<ShaderUFloat3*>(uniform->value))->get();
 			glUniform3f(uniformLocation, value.x, value.y, value.z);
 		}
-		if (typeid(*uniform->value) == typeid(ShaderUMat))
+		if (typeid(*uniform->value) == typeid(ShaderUQuaternion))
 		{
-			Math::Matrix<float> value = static_cast<ShaderUMat*>(uniform->value)->get();
-			if (value.size() == 16)
-			{
-				glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, value.ptr_value());
-			}
-			else
-			{
-				glUniformMatrix3fv(uniformLocation, 1, GL_FALSE, value.ptr_value());
-			}
+			Math::Quaternion value = (static_cast<ShaderUQuaternion*>(uniform->value))->get();
+			glUniform4f(uniformLocation, value.x, value.y, value.z, value.w);
+		}
+		if (typeid(*uniform->value) == typeid(ShaderUMat3))
+		{
+			glm::mat3 value = static_cast<ShaderUMat3*>(uniform->value)->get();
+			glUniformMatrix3fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(value));
+		}
+		if (typeid(*uniform->value) == typeid(ShaderUMat4))
+		{
+			glm::mat4 value = static_cast<ShaderUMat4*>(uniform->value)->get();
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(value));
 		}
 	}
 
@@ -145,4 +148,13 @@ Material& Material::loadTexture(const std::string path)
 
 	index = (index + 1) % DEM_MAXIMUM_TEXTURES;
 	return *this;
+}
+
+Texture* Material::operator[](DEM_UINT index)
+{
+	if (index < m_textures.size())
+	{
+		return m_textures.at(index);
+	}
+	return 0;
 }

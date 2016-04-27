@@ -34,12 +34,12 @@ Mesh* Model::Instanciate(DEM_UINT index)
 	{
 		Vertex *vert = new Vertex(Math::Vector3(positions.at(i), positions.at(i + 1), positions.at(i + 2)));
 
-		if ((i + 3) < normals.size())
+		if ((i + 3) < (DEM_UINT)normals.size())
 		{
 			vert->normal = Math::Vector3(normals.at(i), normals.at(i + 1), normals.at(i + 2));
 		}
 
-		if ((i + 2) < texcoords.size())
+		if ((i + 2) < (DEM_UINT)texcoords.size())
 		{
 			vert->uv = Math::Vector2(texcoords.at(i), texcoords.at(i + 1));
 		}

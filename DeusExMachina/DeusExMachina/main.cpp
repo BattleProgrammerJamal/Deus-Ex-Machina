@@ -7,125 +7,87 @@ using namespace DEM::Core;
 using namespace DEM::Collections;
 using namespace DEM::Math;
 using namespace DEM::System;
+using namespace DEM::AI;
 
-class MTAnimator : public Component
+class ArcBallControl : public Actor
 {
 	public:
-		MTAnimator()
-			: Component()
+		PerspectiveCamera *camera;
+		float width, height;
+		float oldX, oldY, deltaX, deltaY;
+		Vector2 position;
+
+		ArcBallControl(PerspectiveCamera *camera, float width, float height)
+			: Actor()
 		{
+			this->camera = camera;
+			this->width = width;
+			this->height = height;
+			this->oldX = 0.0f;
+			this->oldY = 0.0f;
+			this->deltaX = 0.0f;
+			this->deltaY = 0.0f;
 		}
 
-		void Start(){}
+		void Render() {}
 
 		void Update()
 		{
-			float t = static_cast<Mesh*>(m_parent)->getClock()->seconds();
-			m_parent->transform->setRotation(Quaternion(Vector3(0.0f, 1.0f, 0.0f), 2.0f * sin(t)));
-		}
-};
-
-class KeyboardHandler : public KeyboardEvent
-{
-	void operator()(sf::Keyboard::Key key)
-	{
-		DeusExMachina *app = DeusExMachina::Instance();
-		Renderer *renderer = app->getRenderer();
-		Scene *scene = renderer->getScene();
-
-		if (key == sf::Keyboard::Left)
-		{
-			Actor *m_parent = scene->get("Test");
-			if (typeid(*m_parent) == typeid(Mesh))
+			if (std::rand() % 100 < 3)
 			{
-				Mesh *parentMesh = static_cast<Mesh*>(m_parent);
-				if (typeid(*parentMesh->getGeometry()) == typeid(MorphTargetGeometry))
-				{
-					MorphTargetGeometry *mtGeometry = static_cast<MorphTargetGeometry*>(parentMesh->getGeometry());
-					vector<MorphTarget*> morphTargets = mtGeometry->getMorphTargets();
+				position.set(static_cast<float>(std::rand() % 100) / 100.0f, static_cast<float>(std::rand() % 100) / 100.0f);
+			}
 
-					morphTargets.at(0)->weight -= 0.05f;
-					if (morphTargets.at(0)->weight < 0.0f) { morphTargets.at(0)->weight = 0.0f; }
-				}
+			float x = -1.0f + 2.0f * (position.x / width);
+			float y = -1.0f + 2.0f * (position.y / height);
+			deltaX = x - oldX;
+			deltaY = y - oldY;
+			oldX = x;
+			oldY = y;
+
+			if (deltaX < 0.0f)
+			{
+				camera->target.x += 0.1f;
+			}
+			else
+			{
+				camera->target.x -= 0.1f;
+			}
+
+			if (deltaY < 0.0f)
+			{
+				camera->target.y += 0.1f;
+			}
+			else
+			{
+				camera->target.y -= 0.1f;
 			}
 		}
 
-		if (key == sf::Keyboard::Right)
-		{
-			Actor *m_parent = scene->get("Test");
-			if (typeid(*m_parent) == typeid(Mesh))
-			{
-				Mesh *parentMesh = static_cast<Mesh*>(m_parent);
-				if (typeid(*parentMesh->getGeometry()) == typeid(MorphTargetGeometry))
-				{
-					MorphTargetGeometry *mtGeometry = static_cast<MorphTargetGeometry*>(parentMesh->getGeometry());
-					vector<MorphTarget*> morphTargets = mtGeometry->getMorphTargets();
-
-					morphTargets.at(0)->weight += 0.05f;
-					if (morphTargets.at(0)->weight > 1.0f) { morphTargets.at(0)->weight = 1.0f; }
-				}
-			}
-		}
-	}
+	private:
 };
-
-void TW_CALL AngerPoseChoice(void *data)
-{
-
-}
 
 int main(int argc, char** argv)
 {
-	ProjectSettings *settings = new ProjectSettings;
-	DeusExMachina *app = DeusExMachina::Instance(settings);
-
+	DeusExMachina *app = DeusExMachina::Instance(new ProjectSettings());
+	
 	(*app)([](DeusExMachina *app){
-		Renderer *renderer = app->getRenderer();
-		Scene *scene = renderer->getScene();
-		PerspectiveCamera *camera = static_cast<PerspectiveCamera*>(renderer->getCamera());
+		Profiler::Begin();
 
-		app->addKeyboardEventListener(new KeyboardHandler());
+		Renderer*				renderer	= app->getRenderer();
+		Scene*					scene		= renderer->getScene();
+		PerspectiveCamera*		camera		= static_cast<PerspectiveCamera*>(renderer->getCamera());
 
-		camera->target.y = 5.0f;
-		camera->eye.y = 4.0f;
-		camera->eye.z = 8.0f;
+		renderer->loadSkybox("Assets/skyboxes/skybox/left.jpg", "Assets/skyboxes/skybox/right.jpg", "Assets/skyboxes/skybox/top.jpg", "Assets/skyboxes/skybox/bottom.jpg",
+			"Assets/skyboxes/skybox/front.jpg", "Assets/skyboxes/skybox/back.jpg");
 
-		DirectionalLight *dLight = new DirectionalLight(Vector3(), Vector3(0.0f, 0.0f, 1.0f));
-		dLight->color.set(1.0f, 1.0f, 0.0f, 1.0f);
-		dLight->intensity = 0.5f;
-		scene->add(dLight);
+		scene->add("Assets/scenes/sceneTest.ini");
 
-		Model *neutralPoseModel = new Model("Assets/models/neutral.obj");
-		Model *angerPoseModel = new Model("Assets/models/anger.obj");
-		Model *sadPoseModel = new Model("Assets/models/sad.obj");
-		Model *surprisedPoseModel = new Model("Assets/models/surprised.obj");
-		Mesh *neutralPose = neutralPoseModel->Instanciate(2);
-		Mesh *angerPose = angerPoseModel->Instanciate(2);
-		Mesh *sadPose = sadPoseModel->Instanciate(2);
-		Mesh *surprisedPose = surprisedPoseModel->Instanciate(2);
+		scene->add(new ArcBallControl(camera, app->settings()->width, app->settings()->height));
 
-		std::vector<MorphTarget*> morphTargets;
-		morphTargets.push_back(new MorphTarget(surprisedPose->getGeometry(), 0.5f));
-		morphTargets.push_back(new MorphTarget(sadPose->getGeometry(), 0.5f));
-		morphTargets.push_back(new MorphTarget(angerPose->getGeometry(), 0.33f));
-		MorphTargetGeometry *geo = new MorphTargetGeometry(neutralPose->getGeometry(), morphTargets);
-
-		Material *mat = new LambertMaterial(Color(1.0f, 0.0f, 0.0f, 1.0f), Color(0.0f, 1.0f, 0.0f, 1.0f));
-		Shader *shdr = new Shader("Assets/shaders/morphtarget.vs", "Assets/shaders/morphtarget.fs");
-		shdr->load();
-		mat->setShaderProgram(shdr);
-		mat->loadTexture("Assets/textures/lava2.jpg");
-		Mesh *m = new Mesh(geo, mat, "Test");
-		m->setChildren(neutralPose->getChildren());
-		m->drawStyle = GL_TRIANGLES;
-		m->addComponent(new MTAnimator());
-		scene->add(m);
-
-		TwBar *bar = TwNewBar("User Interface");
-		TwAddButton(bar, "Anger Pose", AngerPoseChoice, 0, "");
+		cout << "Resources loaded in " << Profiler::End() << "s" << endl;
 	});
 
 	DeusExMachina::Destroy();
-	delete settings;
 	return 0;
 }

@@ -22,9 +22,6 @@ DeusExMachina::DeusExMachina(ProjectSettings *settings)
 	{
 		m_renderer = new Renderer(new OrthographicCamera(camSettings.position, camSettings.width, camSettings.height), new Scene("New Scene"));
 	}
-
-	m_system->initUiAPI();
-	m_system->initAudioAPI();
 }
 
 DeusExMachina::~DeusExMachina()
@@ -32,6 +29,7 @@ DeusExMachina::~DeusExMachina()
 	delete m_renderActorsPipeline;
 	delete m_updateActorsPipeline;
 	delete m_updateActorComponentsPipeline;
+	delete m_settings;
 }
 
 DeusExMachina* DeusExMachina::Instance(ProjectSettings *settings)

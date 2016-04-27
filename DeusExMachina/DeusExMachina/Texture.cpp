@@ -44,6 +44,8 @@ void Texture::load(std::vector<std::string> paths)
 			);
 			glTexParameterf(m_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterf(m_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			glBindTexture(m_target, 0);
 		break;
 
@@ -67,9 +69,6 @@ void Texture::load(std::vector<std::string> paths)
 			}
 			glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(m_target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 			glBindTexture(m_target, 0);
 		break;
 	}
@@ -109,7 +108,7 @@ bool Texture::isLoaded() const
 
 void Texture::bind()
 {
-	glActiveTexture(m_unit);
+	glActiveTexture(GL_TEXTURE0 + m_unit);
 	glBindTexture(m_target, m_texture);
 }
 

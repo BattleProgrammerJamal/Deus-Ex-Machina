@@ -7,6 +7,7 @@
 #include <vector>
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
 
 #include <glew.h>
 #include <gl/GL.h>
@@ -14,8 +15,14 @@
 #include <SFML/OpenGL.hpp>
 #include <STB/stb_image.h>
 
+#include "AntTweakBar/AntTweakBar.h"
+
 #include "System.hpp"
+#include "Math.hpp"
+#include "AI.hpp"
 #include "File.hpp"
+#include "FileCSV.hpp"
+#include "FileINI.hpp"
 #include "Pipeline.hpp"
 #include "Component.hpp"
 #include "Resource.hpp"
@@ -26,18 +33,25 @@
 #include "Material.hpp"
 #include "LambertMaterial.hpp"
 #include "PhongMaterial.hpp"
+#include "ConvolutionMaterial.hpp"
 #include "Light.hpp"
 #include "PointLight.hpp"
 #include "DirectionalLight.hpp"
 #include "Geometry.hpp"
 #include "SphereGeometry.hpp"
+#include "PlaneGeometry.hpp"
 #include "MorphTargetGeometry.hpp"
 #include "Transform.hpp"
 #include "Actor.hpp"
+#include "Audio.hpp"
+#include "Sound.hpp"
+#include "Music.hpp"
 #include "Mesh.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
 #include "Renderer.hpp"
+
+#define DEM_DEFAULT_CONFIG_PATH "Assets/system/config.ini"
 
 namespace DEM
 {
@@ -60,6 +74,9 @@ namespace DEM
 		float aspect;
 		float cnear;
 		float cfar;
+		Math::Vector3 eye;
+		Math::Vector3 target;
+		Math::Vector3 up;
 
 		CameraSettings()
 		{
@@ -70,6 +87,9 @@ namespace DEM
 			aspect = 1024.0f / 768.0f;
 			cnear = 0.1f;
 			cfar = 100000.0f;
+			eye.set(0.0f, 0.0f, 2.0f);
+			target.set(0.0f, 0.0f, 0.0f);
+			up.set(0.0f, 1.0f, 0.0f);
 		}
 	};
 
@@ -84,13 +104,42 @@ namespace DEM
 
 		ProjectSettings()
 		{
-			type = DEM_PROJECT_3D;
-			title = "Deus Ex Machina";
-			fullscreen = false;
-			width = 1024;
-			height = 768;
-			cameraSettings.width = width;
-			cameraSettings.height = height;
+			Core::FileINI *config = new Core::FileINI(DEM_DEFAULT_CONFIG_PATH);
+			
+			if ((*config)["Project"].at(0)->value == "2D")
+			{
+				type = DEM_PROJECT_2D;
+			}
+			else
+			{
+				type = DEM_PROJECT_3D;
+			}
+			title = (*config)["Project"].at(1)->value;
+			if ((*config)["Project"].at(2)->value == "enable")
+			{
+				fullscreen = true;
+			}
+			else
+			{
+				fullscreen = false;
+			}
+			
+			width = static_cast<DEM_UINT>(std::atof((*config)["Camera"].at(0)->value.c_str()));
+			height = static_cast<DEM_UINT>(std::atof((*config)["Camera"].at(1)->value.c_str()));
+			cameraSettings.width = static_cast<float>(std::atof((*config)["Camera"].at(0)->value.c_str()));
+			cameraSettings.height = static_cast<float>(std::atof((*config)["Camera"].at(1)->value.c_str()));
+			cameraSettings.fov = Math::rad<float>(static_cast<float>(std::atof((*config)["Camera"].at(2)->value.c_str())));
+			cameraSettings.aspect = cameraSettings.width / cameraSettings.height;
+			cameraSettings.cnear = static_cast<float>(std::atof((*config)["Camera"].at(3)->value.c_str()));
+			cameraSettings.cfar = static_cast<float>(std::atof((*config)["Camera"].at(4)->value.c_str()));
+			std::vector<std::string> eyeElts = StringUtility::Split(config->sections.at(2)->getByKey("eye")->value, ',');
+			std::vector<std::string> targetElts = StringUtility::Split(config->sections.at(2)->getByKey("target")->value, ',');
+			std::vector<std::string> upElts = StringUtility::Split(config->sections.at(2)->getByKey("up")->value, ',');
+			cameraSettings.eye = Math::Vector3(static_cast<float>(std::atof(eyeElts.at(0).c_str())), static_cast<float>(std::atof(eyeElts.at(1).c_str())), static_cast<float>(std::atof(eyeElts.at(2).c_str())));
+			cameraSettings.target = Math::Vector3(static_cast<float>(std::atof(targetElts.at(0).c_str())), static_cast<float>(std::atof(targetElts.at(1).c_str())), static_cast<float>(std::atof(targetElts.at(2).c_str())));
+			cameraSettings.up = Math::Vector3(static_cast<float>(std::atof(upElts.at(0).c_str())), static_cast<float>(std::atof(upElts.at(1).c_str())), static_cast<float>(std::atof(upElts.at(2).c_str())));
+
+			delete config;
 		}
 
 		~ProjectSettings()
@@ -103,10 +152,26 @@ namespace DEM
 	class UpdateActorComponentsPipeline;
 	class SFMLWindowHandlerPipeline;
 
-	class KeyboardEvent
+	class InputEvent
 	{
 		public:
-			virtual void operator()(sf::Keyboard::Key key) = 0;
+			virtual void operator()() = 0;
+	};
+
+	class KeyboardEvent : public InputEvent
+	{
+		public:
+			sf::Keyboard::Key key;
+
+			virtual void operator()() = 0;
+	};
+
+	class MouseMoveEvent : public InputEvent
+	{
+		public:
+			Math::Vector2 position;
+
+			virtual void operator()() = 0;
 	};
 
 	class DeusExMachina
@@ -137,21 +202,21 @@ namespace DEM
 				m_ubo = ubo;
 			}
 
-			void addKeyboardEventListener(KeyboardEvent *kbEvent)
+			void addEventListener(InputEvent *evt)
 			{
-				m_keyboardListeners.emplace_back(kbEvent);
+				m_inputListeners.emplace_back(evt);
 			}
 
-			std::vector<KeyboardEvent*> getKeyboardListeners() const
+			std::vector<InputEvent*> getEventListeners() const
 			{
-				return m_keyboardListeners;
+				return m_inputListeners;
 			}
 
 		private:
 			DeusExMachina(ProjectSettings *settings);
 
 			static DeusExMachina*			sm_instance;
-			std::vector<KeyboardEvent*>		m_keyboardListeners;
+			std::vector<InputEvent*>		m_inputListeners;
 			ProjectSettings*				m_settings;
 			System::System*					m_system;
 			Core::Renderer*					m_renderer;
@@ -213,6 +278,8 @@ namespace DEM
 				std::cout << "GPU Version : " << glGetString(GL_RENDERER) << std::endl;
 #endif
 
+				TwInit(TW_OPENGL, (void*)0);
+
 				static const DEM_UINT UBO_SIZE = sizeof(float) * (16 + 16);
 
 				GLuint ubo = app->getUBO();
@@ -222,26 +289,27 @@ namespace DEM
 				glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo);
 				glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 
+				DEM::Core::Renderer *renderer = app->getRenderer();
+				DEM::Core::Scene *scene = renderer->getScene();
+				DEM::Core::Camera *camera = renderer->getCamera();
+
+				renderer->initSkybox();
+
 				if (OnDisplayContextInitialized != 0)
 				{
 					OnDisplayContextInitialized(app);
 				}
 
-				DEM::Core::Renderer *renderer = app->getRenderer();
-				DEM::Core::Scene *scene = renderer->getScene();
-				DEM::Core::Camera *camera = renderer->getCamera();
-
 				for (DEM_UINT i = 0; i < scene->size(); ++i)
 				{
-					renderer->executeCmd(new DEM::Core::RCActorComponentsStart(i));
+					DEM_UINT id = scene->getByIndex(i)->getId();
+					renderer->executeCmd(new DEM::Core::RCActorComponentsStart(id));
 				}
 
 				while (state())
 				{
 					if (window->pollEvent(evt))
 					{
-						TwEventSFML(&evt, SFML_VERSION_MAJOR, SFML_VERSION_MINOR);
-
 						if (evt.type == sf::Event::Closed || (evt.type == sf::Event::KeyPressed && evt.key.code == sf::Keyboard::Escape))
 						{
 							Pipeline::command(Core::KILL_ALL);
@@ -257,27 +325,48 @@ namespace DEM
 
 						if (evt.type == sf::Event::KeyPressed)
 						{
-							for (KeyboardEvent *kbEvent : app->getKeyboardListeners())
+							for (InputEvent *event : app->getEventListeners())
 							{
-								(*kbEvent)(evt.key.code);
+								KeyboardEvent *kbEvt = static_cast<KeyboardEvent*>(event);
+								if (kbEvt)
+								{
+									kbEvt->key = evt.key.code;
+									(*kbEvt)();
+								}
 							}
 						}
+
+						if (evt.type == sf::Event::MouseMoved)
+						{
+							for (InputEvent *event : app->getEventListeners())
+							{
+								MouseMoveEvent *mouseMoveEvt = static_cast<MouseMoveEvent*>(event);
+								if (mouseMoveEvt)
+								{
+									mouseMoveEvt->position.set((float)evt.mouseMove.x, (float)evt.mouseMove.y);
+									(*mouseMoveEvt)();
+								}
+							}
+						}
+
+						TwEventSFML(&evt, SFML_VERSION_MAJOR, SFML_VERSION_MINOR);
 					}
 					
-					/*
 					glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 					glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float) * 16, camera->getView().ptr_value());
 					glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float) * 16, sizeof(float) * 16, camera->getProj().ptr_value());
 					glBindBuffer(GL_UNIFORM_BUFFER, 0);
-					*/
 
 					glViewport(0, 0, parameters->width, parameters->height);
 					glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+					renderer->renderSkybox();
+
 					for (DEM_UINT i = 0; i < app->getRenderer()->getScene()->size(); ++i)
 					{
-						app->getRenderer()->executeCmd(new Core::RCActorRender(i));
+						DEM_UINT id = scene->getByIndex(i)->getId();
+						renderer->executeCmd(new Core::RCActorRender(id));
 					}
 
 					sf::Vector2u size = window->getSize();
@@ -319,7 +408,8 @@ namespace DEM
 				{
 					for (DEM_UINT i = 0; i < app->getRenderer()->getScene()->size(); ++i)
 					{
-						app->getRenderer()->executeCmd(new Core::RCActorUpdate(i));
+						DEM_UINT id = app->getRenderer()->getScene()->getByIndex(i)->getId();
+						app->getRenderer()->executeCmd(new Core::RCActorUpdate(id));
 					}
 				}
 			}
@@ -353,7 +443,8 @@ namespace DEM
 				{
 					for (DEM_UINT i = 0; i < app->getRenderer()->getScene()->size(); ++i)
 					{
-						Core::Actor *actor = app->getRenderer()->getScene()->get(i);
+						DEM_UINT id = app->getRenderer()->getScene()->getByIndex(i)->getId();
+						Core::Actor *actor = app->getRenderer()->getScene()->get(id);
 						if (actor)
 						{
 							for (DEM_UINT j = 0; j < actor->getComponents().size(); ++j)

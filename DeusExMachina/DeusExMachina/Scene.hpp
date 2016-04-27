@@ -5,7 +5,9 @@
 #include <vector>
 #include <string>
 
+#include "FileINI.hpp"
 #include "Actor.hpp"
+#include "Color.hpp"
 
 #define DEM_SCENE_POOL_RESERVE 100
 
@@ -16,15 +18,18 @@ namespace DEM
 		class Scene
 		{
 			public:
-				Scene(std::string name = "Scene");
+				Scene(const std::string& name = "Scene");
+				Scene(const std::string& path, const std::string& name);
 				Scene(const Scene& scene);
 				virtual ~Scene();
 
 				DEM_UINT size() const;
 
 				Scene& add(Actor *actor);
+				Scene& add(const std::string& sceneFilePath);
 				Actor* get(std::string name);
 				Actor* get(DEM_UINT id);
+				Actor* getByIndex(DEM_UINT id);
 				std::vector<Actor*>::iterator* findById(DEM_UINT id);
 				std::vector<Actor*>::iterator* findByName(std::string name);
 				Scene& remove(Actor *actor);
